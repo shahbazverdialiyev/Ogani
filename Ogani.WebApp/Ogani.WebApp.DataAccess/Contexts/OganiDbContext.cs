@@ -12,7 +12,7 @@ namespace Ogani.WebApp.DataAccess.Contexts
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=.;Database=OganiDb;Integrated Security=True;");
+            optionsBuilder.UseSqlServer("Server=.;Database=OganiDb;Integrated Security=True;TrustServerCertificate=True;");
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
