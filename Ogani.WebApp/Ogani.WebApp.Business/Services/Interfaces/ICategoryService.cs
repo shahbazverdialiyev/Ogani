@@ -1,5 +1,4 @@
 ﻿using Ogani.WebApp.DTOs.CategoryDTO;
-using Ogani.WebApp.DTOs.ProductDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Business.Services.Interfaces
 {
-    public interface IService<TRead,TCreate,TUpdate>
+    public interface IService<TRead, TCreate, TUpdate>
         where TRead : class
         where TCreate : class
         where TUpdate : class
