@@ -19,5 +19,7 @@ namespace Ogani.WebApp.DTOs.ProductDTO
         public bool IsAvailable { get; set; }
         public int? CategoryId { get; set; }
         public IFormFile? Image { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public bool Status { get; set; } = true;
     }
 }

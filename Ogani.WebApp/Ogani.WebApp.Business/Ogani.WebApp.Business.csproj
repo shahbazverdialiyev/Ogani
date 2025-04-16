@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Ogani.WebApp.DataAccess\Ogani.WebApp.DataAccess.csproj" />
     <ProjectReference Include="..\Ogani.WebApp.DTOs\Ogani.WebApp.DTOs.csproj" />
-    <ProjectReference Include="..\Ogani.WebApp.Entities\Ogani.WebApp.Entities.csproj" />
   </ItemGroup>
 
 </Project>

@@ -12,5 +12,7 @@ namespace Ogani.WebApp.DTOs.CategoryDTO
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         public IFormFile? Image { get; set; }
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+        public bool Status { get; set; } = true;
     }
 }
