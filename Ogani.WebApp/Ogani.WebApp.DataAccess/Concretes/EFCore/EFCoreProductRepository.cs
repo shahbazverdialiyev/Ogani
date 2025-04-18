@@ -12,9 +12,7 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
 {
     public class EFCoreProductRepository:EFCoreRepository<Product, int>, IProductRepository
     {
-        public EFCoreProductRepository(OganiDbContext context) : base(context)
-        {
-        }
+        public EFCoreProductRepository(OganiDbContext context) : base(context) { }
 
         public async Task<List<Product>> GetProductsByCategoryIdAsync(int categoryId)=>await _context.Products.Where(x => x.CategoryId == categoryId).ToListAsync();
 

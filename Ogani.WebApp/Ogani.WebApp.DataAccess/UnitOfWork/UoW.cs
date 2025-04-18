@@ -18,6 +18,7 @@ namespace Ogani.WebApp.DataAccess.UnitOfWork
         {
             _context = context;
         }
+
         public IRepository<TEntity, TKey> GetRepository<TEntity, TKey>()
             where TEntity : BaseEntity<TKey>
             where TKey : notnull
