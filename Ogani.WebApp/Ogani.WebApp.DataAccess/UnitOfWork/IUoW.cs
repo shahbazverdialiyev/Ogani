@@ -14,6 +14,9 @@ namespace Ogani.WebApp.DataAccess.UnitOfWork
             where TEntity : BaseEntity<TKey>
             where TKey : notnull;
 
+        IProductRepository GetProductRepository();
+
+        ICategoryRepository GetCategoryRepository();
 
         Task SaveChangesAsync();
     }

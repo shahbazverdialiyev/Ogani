@@ -25,6 +25,11 @@ namespace Ogani.WebApp.DataAccess.UnitOfWork
         {
             return new EFCoreRepository<TEntity, TKey>(_context);
         }
+
+        public IProductRepository GetProductRepository() => new EFCoreProductRepository(_context);
+
+        public ICategoryRepository GetCategoryRepository() => new EFCoreCategoryRepository(_context);
+
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
