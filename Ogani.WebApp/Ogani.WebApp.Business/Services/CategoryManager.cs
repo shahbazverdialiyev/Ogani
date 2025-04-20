@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DataAccess.UnitOfWork;
 using Ogani.WebApp.DTOs.CategoryDTO;
@@ -15,7 +16,8 @@ namespace Ogani.WebApp.Business.Services
     {
         private readonly IUoW _uow;
         private readonly IMapper _mapper;
-        public CategoryManager(IUoW uow, IMapper mapper) : base(uow, mapper)
+        public CategoryManager(IUoW uow, IMapper mapper, IValidator<CategoryCreateDTO> createValidator, IValidator<CategoryUpdateDTO> updateValidator)
+            : base(uow, mapper, createValidator, updateValidator)
         {
             _uow = uow;
             _mapper = mapper;

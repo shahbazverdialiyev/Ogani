@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using FluentValidation;
 using Ogani.WebApp.Business.Services.Interfaces;
+using Ogani.WebApp.Business.Validators.ProductValidators;
 using Ogani.WebApp.DataAccess.UnitOfWork;
 using Ogani.WebApp.DTOs.ProductDTO;
 using Ogani.WebApp.Entities;
@@ -16,8 +18,12 @@ namespace Ogani.WebApp.Business.Services
         private readonly IUoW _uow;
         private readonly IMapper _mapper;
 
-        public ProductManager(IUoW uow, IMapper mapper) : base(uow, mapper)
+
+        public ProductManager(IUoW uow, IMapper mapper, IValidator<ProductCreateDTO> createValidator, IValidator<ProductUpdateDTO> updateValidator)
+            : base(uow, mapper, createValidator, updateValidator)
         {
+            _uow = uow;
+            _mapper = mapper;
         }
 
         public async Task<List<ProductReadDTO>> GetProductsByCategoryIdAsync(int categoryId)

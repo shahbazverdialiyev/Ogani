@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using FluentValidation;
+using FluentValidation.Results;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DataAccess.UnitOfWork;
 using Ogani.WebApp.Entities;
@@ -18,10 +20,15 @@ namespace Ogani.WebApp.Business.Services
     {
         private readonly IUoW _uoW;
         private readonly IMapper _mapper;
-        public GenericManager(IUoW uoW, IMapper mapper)
-        {
+        private readonly IValidator<TCreate> _createValidator;
+        private readonly IValidator<TUpdate> _updateValidator;
+
+        public GenericManager(IUoW uoW, IMapper mapper, IValidator<TCreate> createValidator, IValidator<TUpdate> updateValidator) 
+        { 
             _uoW = uoW;
             _mapper = mapper;
+            _createValidator = createValidator;
+            _updateValidator = updateValidator;
         }
 
         public async Task<TRead> GetByIdAsync(int id)
@@ -38,6 +45,11 @@ namespace Ogani.WebApp.Business.Services
 
         public async Task AddAsync(TCreate entity)
         {
+            Task<ValidationResult> validationResult = _createValidator.ValidateAsync(entity);
+            if (!validationResult.Result.IsValid)
+            {
+                throw new ValidationException(validationResult.Result.Errors);
+            }
             TEntity mappedEntity = _mapper.Map<TCreate, TEntity>(entity);
             await _uoW.GetRepository<TEntity, int>().AddAsync(mappedEntity);
             await _uoW.SaveChangesAsync();
@@ -55,6 +67,11 @@ namespace Ogani.WebApp.Business.Services
 
         public async Task UpdateAsync(TUpdate entity)
         {
+            Task<ValidationResult> validationResult = _updateValidator.ValidateAsync(entity);
+            if (!validationResult.Result.IsValid)
+            {
+                throw new ValidationException(validationResult.Result.Errors);
+            }
             TEntity mappedEntity = _mapper.Map<TUpdate, TEntity>(entity);
             _uoW.GetRepository<TEntity, int>().Update(mappedEntity);
             await _uoW.SaveChangesAsync();
