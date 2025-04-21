@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ogani.WebApp.DTOs", "Ogani.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ogani.WebApp.Business", "Ogani.WebApp.Business\Ogani.WebApp.Business.csproj", "{AF69976C-072E-47AB-AB7A-8D6F993F808D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ogani.WebApp.UI", "Ogani.WebApp.UI\Ogani.WebApp.UI.csproj", "{9F7104FD-AA28-4264-A3D4-98C5D657F5BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{AF69976C-072E-47AB-AB7A-8D6F993F808D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF69976C-072E-47AB-AB7A-8D6F993F808D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF69976C-072E-47AB-AB7A-8D6F993F808D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F7104FD-AA28-4264-A3D4-98C5D657F5BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F7104FD-AA28-4264-A3D4-98C5D657F5BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F7104FD-AA28-4264-A3D4-98C5D657F5BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F7104FD-AA28-4264-A3D4-98C5D657F5BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
