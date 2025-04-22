@@ -10,14 +10,15 @@ namespace Ogani.WebApp.DataAccess.Contexts
 {
     public class OganiDbContext: DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public OganiDbContext(DbContextOptions<OganiDbContext> options) : base(options)
         {
-            optionsBuilder.UseSqlServer("Server=.;Database=OganiDb;Integrated Security=True;TrustServerCertificate=True;");
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
+
         public DbSet<Entities.Product> Products { get; set; }
         public DbSet<Entities.Category> Categories { get; set; }
     }

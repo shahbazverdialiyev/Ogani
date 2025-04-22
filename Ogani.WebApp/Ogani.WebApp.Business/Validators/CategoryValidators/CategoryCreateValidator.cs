@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Business.Validators.CategoryValidators
 {
-    internal class CategoryCreateValidator : AbstractValidator<CategoryCreateDTO>
+    public class CategoryCreateValidator : AbstractValidator<CategoryCreateDTO>
     {
         public CategoryCreateValidator()
         {
