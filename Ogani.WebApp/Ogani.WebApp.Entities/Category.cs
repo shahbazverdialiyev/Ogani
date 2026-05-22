@@ -13,8 +13,7 @@ namespace Ogani.WebApp.Entities
         public string Name { get; set; }=null!;
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
-        public List<Product>? Products { get; set; }
-        [NotMapped]
-        public IFormFile? Image { get; set; }
+
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

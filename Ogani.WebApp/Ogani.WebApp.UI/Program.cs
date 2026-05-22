@@ -13,19 +13,24 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// DbContext
 builder.Services.AddDbContext<OganiDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//AutoMapper
 builder.Services.AddAutoMapper(typeof(ProductProfile).Assembly);
 
+//FluentValidation
 builder.Services.AddValidatorsFromAssemblyContaining<ProductCreateValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ProductUpdateValidator>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<CategoryCreateValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<CategoryUpdateValidator>();
 
+//Managers
 builder.Services.AddScoped<IProductService, ProductManager>();
 builder.Services.AddScoped<ICategoryService, CategoryManager>();
+
 
 var app = builder.Build();
 

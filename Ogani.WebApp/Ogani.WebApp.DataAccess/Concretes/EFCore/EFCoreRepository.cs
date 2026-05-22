@@ -21,7 +21,7 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
             _context = context;
         }
 
-        public async Task<TEntity> GetByIdAsync(TKey id) => await _context.Set<TEntity>().FindAsync(id);
+        public async Task<TEntity?> GetByIdAsync(TKey id) => await _context.Set<TEntity>().FindAsync(id);
         public async Task<List<TEntity>> GetAllAsync() => await _context.Set<TEntity>().ToListAsync();
         public async Task AddAsync(TEntity entity) => await _context.Set<TEntity>().AddAsync(entity);
         public void Update(TEntity entity) => _context.Set<TEntity>().Update(entity);

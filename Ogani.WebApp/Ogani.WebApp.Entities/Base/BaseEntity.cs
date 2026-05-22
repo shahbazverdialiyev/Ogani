@@ -10,13 +10,8 @@ namespace Ogani.WebApp.Entities
         where TKey : notnull
     {
         public TKey Id { get; set; }= default!;
-        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
-        public DateTime? ModifiedDate { get; set; }
         public bool Status { get; set; } = true;
 
-        public void SetModified()
-        {
-            ModifiedDate = DateTime.UtcNow;
-        }
+        public DateTime CreatedDate { get; private set; } = DateTime.UtcNow;
     }
 }

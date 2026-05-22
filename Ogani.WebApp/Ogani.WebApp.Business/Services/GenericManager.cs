@@ -42,7 +42,7 @@ namespace Ogani.WebApp.Business.Services
             List<TEntity> entities = await _uoW.GetRepository<TEntity, int>().GetAllAsync();
             return _mapper.Map<List<TEntity>, List<TRead>>(entities);
         }
-
+        
         public async Task AddAsync(TCreate entity)
         {
             Task<ValidationResult> validationResult = _createValidator.ValidateAsync(entity);

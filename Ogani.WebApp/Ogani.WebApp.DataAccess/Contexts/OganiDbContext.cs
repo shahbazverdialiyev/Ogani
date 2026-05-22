@@ -21,5 +21,10 @@ namespace Ogani.WebApp.DataAccess.Contexts
 
         public DbSet<Entities.Product> Products { get; set; }
         public DbSet<Entities.Category> Categories { get; set; }
+        public DbSet<Entities.Hero> Heroes { get; set; }
+        public DbSet<Entities.Discount> Discounts { get; set; }
+        public DbSet<Entities.SocialLink> SocialLinks { get; set; }
+        public DbSet<Entities.UsefulLink> UsefulLinks { get; set; }
+        public DbSet<Entities.Contact> Contacts { get; set; }
     }
 }

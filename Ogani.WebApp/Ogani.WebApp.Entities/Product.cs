@@ -17,15 +17,20 @@ namespace Ogani.WebApp.Entities
         public int Quantity { get; set; }
         public string? Info { get; set; }
         public double Weight { get; set; }
-        public bool IsFeatured { get; set; }
-        public bool IsAvailable { get; set; }
+        public bool IsFeatured { get; set; } = false;
+        public bool IsAvailable { get; set; }= false;
+        public string? ImageUrl { get; set; }
+
+        public DateTime? ModifiedDate { get; set; }
+
+        public void SetModified()
+        {
+            ModifiedDate = DateTime.UtcNow;
+        }
 
         public int? CategoryId { get; set; }
         public Category? Category { get; set; }
 
-        public string? ImageUrl { get; set; }
-
-        [NotMapped]
-        public IFormFile? Image { get; set; }
+        public ICollection<Discount> Discounts { get; set; }= new List<Discount>();
     }
 }

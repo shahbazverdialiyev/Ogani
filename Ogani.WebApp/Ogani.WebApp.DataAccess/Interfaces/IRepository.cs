@@ -11,7 +11,7 @@ namespace Ogani.WebApp.DataAccess.Abstracts
         where TEntity : BaseEntity<TKey> 
         where TKey :notnull
     {
-        public Task<TEntity> GetByIdAsync(TKey id);
+        public Task<TEntity?> GetByIdAsync(TKey id);
         public Task<List<TEntity>> GetAllAsync();
         public Task AddAsync(TEntity entity);
         public void Update(TEntity entity);
