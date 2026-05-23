@@ -16,9 +16,14 @@ namespace Ogani.WebApp.DTOs.ProductDTO
         public int Quantity { get; set; }
         public string? Info { get; set; }
         public double Weight { get; set; }
+
         public bool IsFeatured { get; set; }
         public bool IsAvailable { get; set; }
+
         public int? CategoryId { get; set; }
+
+        public DateTime? ModifiedDate { get; set; }
+
         public IFormFile? Image { get; set; }
     }
 }

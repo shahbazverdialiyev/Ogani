@@ -11,7 +11,6 @@ namespace Ogani.WebApp.DTOs.Base
     {
         public TKey Id { get; set; } = default!;
         public DateTime CreatedDate { get; set; }
-        public DateTime? ModifiedDate { get; set; }
         public bool Status { get; set; }
     }
 }

@@ -17,6 +17,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<OganiDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+//Uow
+builder.Services.AddScoped<IUoW, UoW>();
+
 //AutoMapper
 builder.Services.AddAutoMapper(typeof(ProductProfile).Assembly);
 
@@ -47,7 +50,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllerRoute(
+            name: "areas",
+            pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",
