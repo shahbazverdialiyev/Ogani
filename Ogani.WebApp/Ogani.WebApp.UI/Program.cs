@@ -1,39 +1,18 @@
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Ogani.WebApp.Business.Mappings.AutoMapper;
-using Ogani.WebApp.Business.Validators.ProductValidators;
-using Ogani.WebApp.Business.Validators.CategoryValidators;
-using Ogani.WebApp.DataAccess.Contexts;
+using Ogani.WebApp.Business.Extensions;
+using Ogani.WebApp.DataAccess.Extensions;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.Business.Services;
-using Ogani.WebApp.DataAccess.UnitOfWork;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-// DbContext
-builder.Services.AddDbContext<OganiDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDataAccessServices(connectionString);
 
-//Uow
-builder.Services.AddScoped<IUoW, UoW>();
-
-//AutoMapper
-builder.Services.AddAutoMapper(typeof(ProductProfile).Assembly);
-
-//FluentValidation
-builder.Services.AddValidatorsFromAssemblyContaining<ProductCreateValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<ProductUpdateValidator>();
-
-builder.Services.AddValidatorsFromAssemblyContaining<CategoryCreateValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<CategoryUpdateValidator>();
-
-//Managers
-builder.Services.AddScoped<IProductService, ProductManager>();
-builder.Services.AddScoped<ICategoryService, CategoryManager>();
-
+builder.Services.AddBusinessServices();
 
 var app = builder.Build();
 
@@ -50,7 +29,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
