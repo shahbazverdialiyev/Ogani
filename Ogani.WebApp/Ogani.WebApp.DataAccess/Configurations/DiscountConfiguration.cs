@@ -16,17 +16,14 @@ namespace Ogani.WebApp.DataAccess.Configurations
         {
             builder.Property(d => d.Code)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            builder.HasIndex(d => d.Code)
+                .IsUnique();
 
             builder.Property(d => d.DiscountPercentage)
-                .IsRequired()
-                .HasColumnType("decimal(18,2)");
-
-            builder.Property(d => d.StartDate)
-                .IsRequired();
-
-            builder.Property(d => d.EndDate)
-                .IsRequired();
+                .HasPrecision(5, 2);
         }
     }
 }

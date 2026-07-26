@@ -14,10 +14,16 @@ namespace Ogani.WebApp.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<SocialLink> builder)
         {
             builder.Property(s => s.Platform)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(50);
+
+            builder.HasIndex(s => new { s.Platform, s.Url })
+                .IsUnique()
+                .HasFilter("[Status] = 1");
 
             builder.Property(s => s.Url)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(1000);
         }
     }
 }

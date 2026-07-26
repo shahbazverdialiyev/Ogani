@@ -15,11 +15,15 @@ namespace Ogani.WebApp.DataAccess.Configurations
         {
             builder.Property(p => p.Name)
                    .IsRequired()
-                   .HasMaxLength(200)
-                   .IsUnicode();
+                   .HasMaxLength(200);
+
+            builder.HasIndex(p => p.Name);
 
             builder.Property(p => p.Description)
                    .HasMaxLength(1000);
+
+            builder.Property(p => p.Info)
+                   .HasMaxLength(500);
 
             builder.Property(p => p.Price)
                    .HasPrecision(18, 2);
@@ -28,7 +32,7 @@ namespace Ogani.WebApp.DataAccess.Configurations
                    .HasPrecision(10, 2);
 
             builder.Property(p => p.ImageUrl)
-                   .HasMaxLength(255);
+                   .HasMaxLength(1000);
 
             // For Nullable FK ON DELETE SET NULL
             builder.HasOne(p => p.Category)

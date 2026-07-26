@@ -13,11 +13,20 @@ namespace Ogani.WebApp.DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<Contact> builder)
         {
-            builder.Property(c=>c.Title)
-                .IsRequired();
+            builder.Property(c => c.Title)
+                .IsRequired()
+                .HasMaxLength(50);
 
-            builder.Property(c=>c.Content)
-                .IsRequired();
+            builder.HasIndex(c => c.Title)
+                .IsUnique()
+                .HasFilter("[Status] = 1");
+
+            builder.Property(c => c.Content)
+                .IsRequired()
+                .HasMaxLength(250);
+
+            builder.Property(c => c.Icon)
+                .HasMaxLength(100);
         }
     }
 }

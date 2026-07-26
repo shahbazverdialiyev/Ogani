@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Ogani.WebApp.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.DataAccess.Contexts
 {
-    public class OganiDbContext: DbContext
+    public class OganiDbContext : DbContext
     {
         public OganiDbContext(DbContextOptions<OganiDbContext> options) : base(options)
         {
@@ -19,12 +20,25 @@ namespace Ogani.WebApp.DataAccess.Contexts
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
 
-        public DbSet<Entities.Product> Products { get; set; }
-        public DbSet<Entities.Category> Categories { get; set; }
-        public DbSet<Entities.Hero> Heroes { get; set; }
-        public DbSet<Entities.Discount> Discounts { get; set; }
-        public DbSet<Entities.SocialLink> SocialLinks { get; set; }
-        public DbSet<Entities.UsefulLink> UsefulLinks { get; set; }
-        public DbSet<Entities.Contact> Contacts { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Hero> Heroes { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
+        public DbSet<SocialLink> SocialLinks { get; set; }
+        public DbSet<UsefulLink> UsefulLinks { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            foreach (var entry in ChangeTracker.Entries<Product>())
+            {
+                if (entry.State == EntityState.Modified)
+                {
+                    entry.Property(p => p.ModifiedDate).CurrentValue = DateTime.UtcNow;
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
     }
 }

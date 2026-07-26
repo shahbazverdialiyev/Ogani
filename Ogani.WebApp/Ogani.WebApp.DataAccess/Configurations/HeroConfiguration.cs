@@ -15,12 +15,15 @@ namespace Ogani.WebApp.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Hero> builder)
         {
             builder.Property(h => h.Title)
-           .IsRequired()
-           .HasMaxLength(100);
+                .IsRequired()
+                .HasMaxLength(100);
 
             builder.Property(h => h.Subtitle)
                 .IsRequired()
                 .HasMaxLength(200);
+
+            builder.Property(h => h.Description)
+                .HasMaxLength(500);
 
             builder.Property(h => h.ButtonText)
                 .IsRequired()
@@ -31,10 +34,8 @@ namespace Ogani.WebApp.DataAccess.Configurations
                 .HasMaxLength(200);
 
             builder.Property(h => h.ImageUrl)
-                .IsRequired();
-
-            builder.Property(h => h.IsActive)
-                .HasDefaultValue(false);
+                .IsRequired()
+                .HasMaxLength(1000);
 
             // Only one active hero (DB constraint)
             builder.HasIndex(h => h.IsActive)

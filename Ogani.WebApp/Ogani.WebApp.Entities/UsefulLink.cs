@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ogani.WebApp.Entities.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace Ogani.WebApp.Entities
 {
     public class UsefulLink:BaseEntity<int>
     {
-        public int Section {  get; set; }
+        public UsefulLinkSection Section {  get; set; }
         public string Name { get; set; } = null!;
         public string Url { get; set; } = null!;
     }

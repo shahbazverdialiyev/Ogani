@@ -9,15 +9,21 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.DataAccess.Configurations
 {
-    internal class UsefulLinkConfiguration : IEntityTypeConfiguration<UsefulLink>
+    public class UsefulLinkConfiguration : IEntityTypeConfiguration<UsefulLink>
     {
         public void Configure(EntityTypeBuilder<UsefulLink> builder)
         {
-            builder.Property(u=>u.Name)
-                .IsRequired();
+            builder.Property(u => u.Name)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            builder.HasIndex(u => u.Name )
+                .IsUnique()
+                .HasFilter("[Status] = 1");
 
             builder.Property(u => u.Url)
-                .IsRequired();
+                .IsRequired()
+                .HasMaxLength(1000);
         }
     }
 }

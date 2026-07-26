@@ -13,17 +13,19 @@ namespace Ogani.WebApp.DataAccess.Configurations
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
-
             builder.Property(c => c.Name)
                    .IsRequired()
-                   .HasMaxLength(100)
-                   .IsUnicode();
+                   .HasMaxLength(100);
+
+            builder.HasIndex(c => c.Name)
+                    .IsUnique()
+                    .HasFilter("[Status] = 1");
 
             builder.Property(c => c.Description)
                    .HasMaxLength(500);
 
             builder.Property(c => c.ImageUrl)
-                   .HasMaxLength(255);
+                   .HasMaxLength(1000);
         }
     }
 
