@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Ogani.WebApp.DataAccess.Abstracts;
 using Ogani.WebApp.DataAccess.Contexts;
 using Ogani.WebApp.DataAccess.Interfaces;
 using Ogani.WebApp.Entities;
@@ -15,5 +14,31 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
     {
         public EFCoreDiscountRepository(OganiDbContext context) : base(context) { }
 
+        public async Task<List<Discount>> GetActiveDiscountsAsync()
+        {
+            var now = DateTime.UtcNow;
+
+            return await Table.Where(d => d.StartDate <= now && d.EndDate >= now)
+                              .AsNoTracking()
+                              .ToListAsync();
+        }
+
+        public async Task<List<Discount>> GetExpiredDiscountsAsync()
+        {
+            var now = DateTime.UtcNow;
+
+            return await Table.Where(d => d.EndDate < now)
+                              .AsNoTracking()
+                              .ToListAsync();
+        }
+
+        public async Task<List<Discount>> GetUpcomingDiscountsAsync()
+        {
+            var now = DateTime.UtcNow;
+
+            return await Table.Where(d => d.StartDate > now)
+                              .AsNoTracking()
+                              .ToListAsync();
+        }
     }
 }

@@ -1,5 +1,5 @@
-﻿using Ogani.WebApp.DataAccess.Abstracts;
-using Ogani.WebApp.Entities;
+﻿using Ogani.WebApp.Entities;
+using Ogani.WebApp.Entities.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.DataAccess.Interfaces
 {
-    public interface IUsefulLinkRepository:IRepository<UsefulLink,int>
+    public interface IUsefulLinkRepository : IRepository<UsefulLink, int>
     {
+        Task<List<UsefulLink>> GetBySectionAsync(UsefulLinkSection section);
     }
 }

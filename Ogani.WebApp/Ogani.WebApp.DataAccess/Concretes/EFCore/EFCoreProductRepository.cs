@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Ogani.WebApp.DataAccess.Abstracts;
 using Ogani.WebApp.DataAccess.Contexts;
+using Ogani.WebApp.DataAccess.Interfaces;
 using Ogani.WebApp.Entities;
 using System;
 using System.Collections.Generic;
@@ -14,9 +14,55 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
     {
         public EFCoreProductRepository(OganiDbContext context) : base(context) { }
 
-        public async Task<List<Product>> GetProductsByCategoryIdAsync(int categoryId) => await _context.Products
-            .Where(x => x.CategoryId == categoryId)
-            .ToListAsync();
+        public async Task<List<Product>> GetAvailableProductsAsync()
+        {
+            return await Table.Where(p => p.IsAvailable)
+                              .AsNoTracking()
+                              .ToListAsync();
+        }
 
+        public async Task<List<Product>> GetFeaturedProductsAsync()
+        {
+            return await Table.Where(p => p.IsFeatured)
+                              .AsNoTracking()
+                              .ToListAsync();
+        }
+
+        public async Task<List<Product>> GetProductsByCategoryIdAsync(int categoryId, bool tracking = false)
+        {
+            IQueryable<Product> query = Table.Where(p => p.CategoryId == categoryId);
+
+            return tracking
+                ? await query.ToListAsync()
+                : await query.AsNoTracking()
+                             .ToListAsync();
+        }
+
+        public async Task<List<Product>> GetProductsWithCategoryAsync()
+        {
+            return await Table.Include(p => p.Category)
+                              .AsNoTracking()
+                              .ToListAsync();
+        }
+
+        public async Task<Product?> GetProductDetailsAsync(int id)
+        {
+            return await Table.Include(p => p.Category)
+                              .Include(p => p.Discounts)
+                              .AsNoTracking()
+                              .FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<List<Product>> SearchAsync(string keyword)
+        {
+            if (string.IsNullOrWhiteSpace(keyword))
+                return new List<Product>();
+
+            keyword = keyword.Trim();
+
+            return await Table.Where(p => EF.Functions.Like(p.Name, $"%{keyword}%"))
+                              .AsNoTracking()
+                              .ToListAsync();
+        }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Ogani.WebApp.DataAccess.Abstracts;
 using Ogani.WebApp.DataAccess.Contexts;
 using Ogani.WebApp.DataAccess.Interfaces;
 using Ogani.WebApp.Entities;

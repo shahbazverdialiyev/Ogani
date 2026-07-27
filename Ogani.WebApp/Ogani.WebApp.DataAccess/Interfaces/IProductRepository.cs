@@ -5,10 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ogani.WebApp.DataAccess.Abstracts
+namespace Ogani.WebApp.DataAccess.Interfaces
 {
-    public interface IProductRepository:IRepository<Product,int>
+    public interface IProductRepository : IRepository<Product, int>
     {
-        public Task<List<Product>> GetProductsByCategoryIdAsync(int categoryId);
+        Task<List<Product>> GetAvailableProductsAsync();
+
+        Task<List<Product>> GetFeaturedProductsAsync();
+
+        Task<List<Product>> GetProductsByCategoryIdAsync(int categoryId, bool tracking = false);
+
+        Task<List<Product>> GetProductsWithCategoryAsync();
+
+        Task<Product?> GetProductDetailsAsync(int id);
+
+        Task<List<Product>> SearchAsync(string keyword);
     }
 }

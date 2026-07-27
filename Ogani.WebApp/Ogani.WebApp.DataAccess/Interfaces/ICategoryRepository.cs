@@ -5,10 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ogani.WebApp.DataAccess.Abstracts
+namespace Ogani.WebApp.DataAccess.Interfaces
 {
     public interface ICategoryRepository : IRepository<Category, int>
     {
-        public Task<List<Category>> GetCategoriesWithProductsAsync();
+        Task<List<Category>> GetCategoriesWithProductsAsync(bool tracking = false);
+
+        Task<Category?> GetCategoryWithProductsAsync(int id);
     }
 }

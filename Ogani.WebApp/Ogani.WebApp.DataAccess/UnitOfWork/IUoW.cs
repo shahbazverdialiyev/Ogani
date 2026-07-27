@@ -1,4 +1,4 @@
-﻿using Ogani.WebApp.DataAccess.Abstracts;
+﻿using Ogani.WebApp.DataAccess.Interfaces;
 using Ogani.WebApp.Entities;
 using System;
 using System.Collections.Generic;
@@ -14,10 +14,20 @@ namespace Ogani.WebApp.DataAccess.UnitOfWork
             where TEntity : BaseEntity<TKey>
             where TKey : notnull;
 
-        IProductRepository GetProductRepository();
+        IProductRepository ProductRepository { get; }
 
-        ICategoryRepository GetCategoryRepository();
+        ICategoryRepository CategoryRepository { get; }
 
-        Task SaveChangesAsync();
+        IHeroRepository HeroRepository { get; }
+
+        IDiscountRepository DiscountRepository { get; }
+
+        IContactRepository ContactRepository { get; }
+
+        ISocialLinkRepository SocialLinkRepository { get; }
+
+        IUsefulLinkRepository UsefulLinkRepository { get; }
+
+        Task<int> SaveChangesAsync();
     }
 }
