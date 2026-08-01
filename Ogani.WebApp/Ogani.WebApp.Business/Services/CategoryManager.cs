@@ -12,19 +12,13 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Business.Services
 {
-    public class CategoryManager:GenericManager<CategoryReadDTO, CategoryCreateDTO, CategoryUpdateDTO, Category>, ICategoryService
+    public class CategoryManager : GenericManager<Category, CategoryReadDTO, CategoryCreateDTO, CategoryUpdateDTO>, ICategoryService
     {
-        private readonly IUoW _uow;
-        private readonly IMapper _mapper;
         public CategoryManager(IUoW uow, IMapper mapper, IValidator<CategoryCreateDTO> createValidator, IValidator<CategoryUpdateDTO> updateValidator)
-            : base(uow, mapper, createValidator, updateValidator)
-        {
-            _uow = uow;
-            _mapper = mapper;
-        }
+            : base(uow, mapper, createValidator, updateValidator) { }
         public async Task<List<CategoryReadDTO>> GetCategoriesWithProductsAsync()
         {
-            List<Category> categories = await _uow.GetCategoryRepository().GetCategoriesWithProductsAsync();
+            List<Category> categories = await _uoW.CategoryRepository.GetCategoriesWithProductsAsync();
             return await _mapper.Map<Task<List<CategoryReadDTO>>>(categories);
         }
     }

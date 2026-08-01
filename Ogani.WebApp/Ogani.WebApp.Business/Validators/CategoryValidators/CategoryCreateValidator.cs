@@ -13,10 +13,10 @@ namespace Ogani.WebApp.Business.Validators.CategoryValidators
         public CategoryCreateValidator()
         {
             RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("Name is required.")
-                .Length(2, 50).WithMessage("Name must be between 2 and 50 characters.");
+                .NotEmpty().WithMessage("Name is required")
+                .Length(2, 50).WithMessage("Name must be between 2 and 50 characters");
             RuleFor(x => x.Description)
-                .Length(10, 200).WithMessage("Description must be between 10 and 200 characters.");
+                .Length(10, 200).WithMessage("Description must be between 10 and 200 characters");
         }
     }
 }

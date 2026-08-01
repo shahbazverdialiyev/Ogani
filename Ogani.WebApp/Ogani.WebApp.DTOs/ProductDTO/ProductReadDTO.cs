@@ -1,4 +1,5 @@
 ﻿using Ogani.WebApp.DTOs.Base;
+using Ogani.WebApp.DTOs.DiscountDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,21 +10,18 @@ namespace Ogani.WebApp.DTOs.ProductDTO
 {
     public class ProductReadDTO : BaseDTO<int>
     {
-        public string Name { get; set; } = null!;
-        public string? Description { get; set; }
-        public decimal Price { get; set; }
-        public int Quantity { get; set; }
-        public string? Info { get; set; }
-        public double Weight { get; set; }
+        public string Name { get; init; } = null!;
+        public decimal Price { get; init; }
+        public int Quantity { get; init; }
 
-        public bool IsFeatured { get; set; }
-        public bool IsAvailable { get; set; }
+        public bool IsFeatured { get; init; }
+        public bool IsAvailable { get; init; }
 
-        public string? ImageUrl { get; set; }
+        public string? ImageUrl { get; init; }
 
-        public DateTime? ModifiedDate { get; set; }
+        public DateTime CreatedDate { get; init; }
 
-        public string? CategoryName { get; set; }
+        public int? CategoryId { get; init; }
+        public string? CategoryName { get; init; }
     }
-
 }

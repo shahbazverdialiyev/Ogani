@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
+using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
+using Ogani.WebApp.DataAccess.Interfaces;
 using Ogani.WebApp.DataAccess.UnitOfWork;
+using Ogani.WebApp.DTOs.Base;
 using Ogani.WebApp.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,68 +15,79 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Business.Services
 {
-    public class GenericManager<TRead, TCreate, TUpdate, TEntity> : IService<TRead, TCreate, TUpdate>
-        where TRead : class
-        where TCreate : class
-        where TUpdate : class
+    public class GenericManager<TEntity, TRead, TDetailRead, TCreate, TUpdate> : IService<TRead, TDetailRead, TCreate, TUpdate>
         where TEntity : BaseEntity<int>
+        where TRead : BaseDTO<int>
+        where TDetailRead : BaseDTO<int>
+        where TCreate : class
+        where TUpdate : BaseDTO<int>
     {
-        private readonly IUoW _uoW;
-        private readonly IMapper _mapper;
-        private readonly IValidator<TCreate> _createValidator;
-        private readonly IValidator<TUpdate> _updateValidator;
+        protected readonly IUoW _uoW;
+        protected readonly IMapper _mapper;
+        protected readonly IValidator<TCreate> _createValidator;
+        protected readonly IValidator<TUpdate> _updateValidator;
 
-        public GenericManager(IUoW uoW, IMapper mapper, IValidator<TCreate> createValidator, IValidator<TUpdate> updateValidator) 
-        { 
+        public GenericManager(IUoW uoW, IMapper mapper, IValidator<TCreate> createValidator, IValidator<TUpdate> updateValidator)
+        {
             _uoW = uoW;
             _mapper = mapper;
             _createValidator = createValidator;
             _updateValidator = updateValidator;
         }
 
-        public async Task<TRead> GetByIdAsync(int id)
+        public async Task<TDetailRead> GetByIdAsync(int id)
         {
-            TEntity entity = await _uoW.GetRepository<TEntity, int>().GetByIdAsync(id);
-            return _mapper.Map<TRead>(entity);
+            TEntity? entity = await _uoW.GetRepository<TEntity, int>().GetByIdAsync(id)
+                ?? throw new NotFoundException(typeof(TEntity).Name, id);
+
+            return _mapper.Map<TDetailRead>(entity);
         }
 
         public async Task<List<TRead>> GetAllAsync()
         {
             List<TEntity> entities = await _uoW.GetRepository<TEntity, int>().GetAllAsync();
-            return _mapper.Map<List<TEntity>, List<TRead>>(entities);
+            return _mapper.Map<List<TRead>>(entities);
         }
-        
-        public async Task AddAsync(TCreate entity)
+
+        public virtual async Task AddAsync(TCreate dto)
         {
-            Task<ValidationResult> validationResult = _createValidator.ValidateAsync(entity);
-            if (!validationResult.Result.IsValid)
-            {
-                throw new ValidationException(validationResult.Result.Errors);
-            }
-            TEntity mappedEntity = _mapper.Map<TCreate, TEntity>(entity);
-            await _uoW.GetRepository<TEntity, int>().AddAsync(mappedEntity);
+            ValidationResult validationResult = await _createValidator.ValidateAsync(dto);
+
+            if (!validationResult.IsValid)
+                throw new BusinessValidationException(validationResult.Errors);
+
+            TEntity entity = _mapper.Map<TEntity>(dto);
+
+            await _uoW.GetRepository<TEntity, int>().AddAsync(entity);
+            await _uoW.SaveChangesAsync();
+        }
+
+        public virtual async Task UpdateAsync(TUpdate updatedEntity)
+        {
+            ValidationResult validationResult = await _updateValidator.ValidateAsync(updatedEntity);
+
+            if (!validationResult.IsValid)
+                throw new BusinessValidationException(validationResult.Errors);
+
+            var repository = _uoW.GetRepository<TEntity, int>();
+
+            TEntity existEntity = await repository.GetByIdAsync(updatedEntity.Id, tracking: true)
+                ?? throw new NotFoundException(typeof(TEntity).Name, updatedEntity.Id);
+
+            _mapper.Map(updatedEntity, existEntity);
+
+            repository.Update(existEntity);
             await _uoW.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
-            TEntity entity = await _uoW.GetRepository<TEntity, int>().GetByIdAsync(id);
-            if (entity != null)
-            {
-                _uoW.GetRepository<TEntity, int>().Delete(entity);
-                await _uoW.SaveChangesAsync();
-            }
-        }
+            var repository = _uoW.GetRepository<TEntity, int>();
 
-        public async Task UpdateAsync(TUpdate entity)
-        {
-            Task<ValidationResult> validationResult = _updateValidator.ValidateAsync(entity);
-            if (!validationResult.Result.IsValid)
-            {
-                throw new ValidationException(validationResult.Result.Errors);
-            }
-            TEntity mappedEntity = _mapper.Map<TUpdate, TEntity>(entity);
-            _uoW.GetRepository<TEntity, int>().Update(mappedEntity);
+            TEntity entity = await repository.GetByIdAsync(id, tracking: true)
+                ?? throw new NotFoundException(typeof(TEntity).Name, id);
+
+            repository.Delete(entity);
             await _uoW.SaveChangesAsync();
         }
     }

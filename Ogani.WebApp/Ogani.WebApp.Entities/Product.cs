@@ -24,6 +24,6 @@ namespace Ogani.WebApp.Entities
         public int? CategoryId { get; set; }
         public Category? Category { get; set; }
 
-        public ICollection<Discount> Discounts { get; set; } = new List<Discount>();
+        public ICollection<Discount> Discounts { get; set; } = [];
     }
 }

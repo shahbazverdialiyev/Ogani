@@ -9,15 +9,21 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Business.Mappings.AutoMapper
 {
-    public class ProductProfile: Profile
+    public class ProductProfile : Profile
     {
         public ProductProfile()
         {
-            CreateMap<Product, ProductReadDTO>()
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
-            CreateMap<ProductCreateDTO, Product>();
+            CreateMap<Product, ProductReadDTO>();
+
+            CreateMap<Product, ProductDetailReadDTO>();
+
+            CreateMap<ProductCreateDTO, Product>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.Discounts, opt => opt.Ignore());
+
             CreateMap<ProductUpdateDTO, Product>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore())
+                .ForMember(dest => dest.Discounts, opt => opt.Ignore());
         }
     }
 }

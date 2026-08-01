@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Entities
 {
-    public class BaseEntity<TKey>
+    public abstract class BaseEntity<TKey>
         where TKey : notnull
     {
         public TKey Id { get; set; }= default!;
