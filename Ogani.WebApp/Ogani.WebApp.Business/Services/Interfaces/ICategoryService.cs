@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Business.Services.Interfaces
 {
-    public interface ICategoryService : IService<CategoryReadDTO, CategoryCreateDTO, CategoryUpdateDTO>
+    public interface ICategoryService : IService<CategoryReadDTO,CategoryReadDTO, CategoryCreateDTO, CategoryUpdateDTO>
     {
         Task<List<CategoryReadDTO>> GetCategoriesWithProductsAsync();
     }

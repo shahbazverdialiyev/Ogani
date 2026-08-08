@@ -6,6 +6,7 @@ using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DataAccess.Interfaces;
 using Ogani.WebApp.DataAccess.UnitOfWork;
 using Ogani.WebApp.DTOs.Base;
+using Ogani.WebApp.DTOs.ProductDTO;
 using Ogani.WebApp.Entities;
 using System;
 using System.Collections.Generic;
@@ -43,10 +44,20 @@ namespace Ogani.WebApp.Business.Services
             return _mapper.Map<TDetailRead>(entity);
         }
 
-        public async Task<List<TRead>> GetAllAsync()
+        public virtual async Task<List<TRead>> GetAllAsync()
         {
             List<TEntity> entities = await _uoW.GetRepository<TEntity, int>().GetAllAsync();
             return _mapper.Map<List<TRead>>(entities);
+        }
+
+        public virtual async Task<TUpdate> GetForUpdateAsync(int id)
+        {
+            var repository = _uoW.GetRepository<TEntity, int>();
+
+            TEntity entity = await repository.GetForUpdateAsync(id)
+                ?? throw new NotFoundException(typeof(TEntity).Name, id);
+
+            return _mapper.Map<TUpdate>(entity);
         }
 
         public virtual async Task AddAsync(TCreate dto)
@@ -80,7 +91,7 @@ namespace Ogani.WebApp.Business.Services
             await _uoW.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public virtual async Task DeleteAsync(int id)
         {
             var repository = _uoW.GetRepository<TEntity, int>();
 

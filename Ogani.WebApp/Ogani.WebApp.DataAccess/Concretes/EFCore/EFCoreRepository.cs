@@ -32,7 +32,12 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
                               .FirstOrDefaultAsync(x => x.Id.Equals(id));
         }
 
-        public async Task<List<TEntity>> GetAllAsync(bool tracking = false)
+        public virtual async Task<TEntity?> GetForUpdateAsync(int id)
+        {
+            return await Table.FindAsync(id);
+        }
+
+        public virtual async Task<List<TEntity>> GetAllAsync(bool tracking = false)
         {
             return tracking
                 ? await Table.ToListAsync()

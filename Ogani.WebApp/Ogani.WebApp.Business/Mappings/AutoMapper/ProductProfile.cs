@@ -21,6 +21,8 @@ namespace Ogani.WebApp.Business.Mappings.AutoMapper
                 .ForMember(dest => dest.ImageUrl, opt => opt.Ignore())
                 .ForMember(dest => dest.Discounts, opt => opt.Ignore());
 
+            CreateMap<Product, ProductUpdateDTO>();
+
             CreateMap<ProductUpdateDTO, Product>()
                 .ForMember(dest => dest.ImageUrl, opt => opt.Ignore())
                 .ForMember(dest => dest.Discounts, opt => opt.Ignore());

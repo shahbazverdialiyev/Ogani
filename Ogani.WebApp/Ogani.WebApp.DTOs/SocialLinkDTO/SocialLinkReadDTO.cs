@@ -11,5 +11,7 @@ namespace Ogani.WebApp.DTOs.SocialLinkDTO
     {
         public string Platform { get; set; } = null!;
         public string Url { get; set; } = null!;
+
+        public DateTime CreatedDate { get; init; }
     }
 }

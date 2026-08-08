@@ -3,6 +3,7 @@ using Ogani.WebApp.DataAccess.Contexts;
 using Ogani.WebApp.DataAccess.Interfaces;
 using Ogani.WebApp.Entities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,22 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
     public class EFCoreProductRepository : EFCoreRepository<Product, int>, IProductRepository
     {
         public EFCoreProductRepository(OganiDbContext context) : base(context) { }
+
+        public override async Task<List<Product>> GetAllAsync(bool tracking = false)
+        {
+            IQueryable<Product> query = Table.Include(p => p.Category);
+
+            return tracking
+                ? await query.ToListAsync()
+                : await query.AsNoTracking().ToListAsync();
+        }
+
+        public override async Task<Product?> GetForUpdateAsync(int id)
+        {
+            return await Table.Include(p => p.Category)
+                              .Include(p => p.Discounts)
+                              .FirstOrDefaultAsync(p => p.Id == id);
+        }
 
         public async Task<List<Product>> GetAvailableProductsAsync()
         {

@@ -9,7 +9,9 @@ namespace Ogani.WebApp.DTOs.ContactDTO
 {
     public class ContactReadDTO:BaseDTO<int>
     {
-        public string Title { get; set; } = null!;
-        public string Content { get; set; } = null!;
+        public string Title { get; init; } = null!;
+        public string Content { get; init; } = null!;
+
+        public DateTime CreatedDate { get; init; }
     }
 }

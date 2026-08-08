@@ -13,6 +13,6 @@ namespace Ogani.WebApp.Entities
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
-        public ICollection<Product> Products { get; set; } = new List<Product>();
+        public ICollection<Product> Products { get; set; } = [];
     }
 }

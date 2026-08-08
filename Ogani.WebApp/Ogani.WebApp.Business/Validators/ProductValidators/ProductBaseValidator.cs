@@ -11,7 +11,7 @@ namespace Ogani.WebApp.Business.Validators.ProductValidators
     public abstract class ProductBaseValidator<T> : AbstractValidator<T>
         where T : IProductRequest
     {
-        private static readonly string[] AllowedExtensions =
+        private static readonly string[] AllowedExtensionsForImage =
         {
             ".jpg", ".jpeg", ".png", ".webp"
         };
@@ -40,8 +40,8 @@ namespace Ogani.WebApp.Business.Validators.ProductValidators
             When(x => x.Image is not null, () =>
             {
                 RuleFor(x => x.Image!)
-                    .Must(file => AllowedExtensions.Contains(Path.GetExtension(file.FileName).ToLowerInvariant()))
-                    .WithMessage($"Only the following file types are allowed: {string.Join(", ", AllowedExtensions)}.")
+                    .Must(file => AllowedExtensionsForImage.Contains(Path.GetExtension(file.FileName).ToLowerInvariant()))
+                    .WithMessage($"Only the following file types are allowed: {string.Join(", ", AllowedExtensionsForImage)}.")
 
                     .Must(file => file.Length <= MaxImageSize)
                     .WithMessage($"Image size must be less than {MaxImageSizeInMB} MB.");

@@ -33,7 +33,9 @@ namespace Ogani.WebApp.Business.Services.Storage
 
             await using FileStream fileStream = new(filePath, FileMode.Create);
 
-            return $"/uploads,{folderName}/{filePath}";
+            await file.CopyToAsync(fileStream);
+
+            return $"/uploads/{folderName}/{fileName}";
         }
 
         public Task DeleteAsync(string fileUrl)

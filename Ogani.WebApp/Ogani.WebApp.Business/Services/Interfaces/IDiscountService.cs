@@ -1,4 +1,4 @@
-﻿using Ogani.WebApp.DTOs.HeroDTO;
+﻿using Ogani.WebApp.DTOs.DiscountDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Business.Services.Interfaces
 {
-    public interface IHeroService:IService<HeroReadDTO,HeroReadDTO,HeroCreateDTO,HeroUpdateDTO>
+    public interface IDiscountService : IService<DiscountReadDTO, DiscountReadDTO, DiscountCreateDTO, DiscountUpdateDTO>
     {
     }
 }

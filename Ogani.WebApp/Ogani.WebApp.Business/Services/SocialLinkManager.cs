@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Business.Services
 {
-    public class SocialLinkManager : GenericManager<SocialLink, SocialLinkReadDTO, SocialLinkCreateDTO, SocialLinkUpdateDTO>, ISocialLinkService
+    public class SocialLinkManager : GenericManager<SocialLink, SocialLinkReadDTO,SocialLinkReadDTO, SocialLinkCreateDTO, SocialLinkUpdateDTO>, ISocialLinkService
     {
         public SocialLinkManager(IUoW uoW, IMapper mapper, IValidator<SocialLinkCreateDTO> createValidator, IValidator<SocialLinkUpdateDTO> updateValidator)
             : base(uoW, mapper, createValidator, updateValidator) { }
