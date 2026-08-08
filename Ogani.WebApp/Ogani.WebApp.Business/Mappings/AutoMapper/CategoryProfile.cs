@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Ogani.WebApp.DTOs.ProductDTO;
 
 namespace Ogani.WebApp.Business.Mappings.AutoMapper
 {
@@ -14,9 +15,16 @@ namespace Ogani.WebApp.Business.Mappings.AutoMapper
         public CategoryProfile()
         {
             CreateMap<Category, CategoryReadDTO>();
-            CreateMap<CategoryCreateDTO, Category>();
+
+            CreateMap<Category, CategoryDetailReadDTO>()
+                .ForMember(dest => dest.ProductNames, opt => opt.MapFrom(src => src.Products.Select(x => x.Name)));
+
+            CreateMap<CategoryCreateDTO, Category>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
             CreateMap<CategoryUpdateDTO, Category>()
-                .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
         }
     }
 }

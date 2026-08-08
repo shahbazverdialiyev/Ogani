@@ -1,16 +1,16 @@
 ﻿using Ogani.WebApp.DTOs.Base;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ogani.WebApp.DTOs.SocialLinkDTO
+namespace Ogani.WebApp.DTOs.CategoryDTO
 {
-    public class SocialLinkReadDTO:BaseDTO<int>
+    public class CategoryDetailReadDTO : CategoryReadDTO
     {
-        public string Platform { get; set; } = null!;
-        public string Url { get; set; } = null!;
+        public IReadOnlyCollection<string> ProductNames { get; init; } = [];
 
         public DateTime CreatedDate { get; init; }
     }

@@ -1,0 +1,27 @@
+﻿@using Ogani.WebApp.UI.Areas.Admin.ViewModels
+@model DiscountMultiSelectVM
+
+    <label class="font-weight-bold d-block mb-2">
+        Discounts
+    </label>
+
+    <div class="btn-group-toggle" data-toggle="buttons">
+
+        @foreach (var discount in Model.Discounts)
+        {
+            bool selected = Model.SelectedDiscountIds.Contains(discount.Id);
+
+            <label class="btn btn-outline-primary mb-2 @(selected ? "active" : "")">
+
+                <input type="checkbox"
+                       name="DiscountIds"
+                       value="@discount.Id"
+                       autocomplete="off"
+                @(selected ? "checked" : "") />
+
+                @discount.Code (@discount.DiscountPercentage)
+
+            </label>
+        }
+
+    </div>

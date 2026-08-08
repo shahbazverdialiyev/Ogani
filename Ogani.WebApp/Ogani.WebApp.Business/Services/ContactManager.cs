@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Business.Services
 {
-    public class ContactManager : GenericManager<Contact, ContactReadDTO, ContactCreateDTO, ContactUpdateDTO>, IContactService
+    public class ContactManager : GenericManager<Contact, ContactReadDTO, ContactReadDTO, ContactCreateDTO, ContactUpdateDTO>, IContactService
     {
         public ContactManager(IUoW uoW, IMapper mapper, IValidator<ContactCreateDTO> createValiadtor, IValidator<ContactUpdateDTO> updateValidator)
             : base(uoW, mapper, createValiadtor, updateValidator) { }

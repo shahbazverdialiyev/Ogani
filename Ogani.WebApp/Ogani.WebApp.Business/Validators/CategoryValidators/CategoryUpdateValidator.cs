@@ -10,6 +10,13 @@ namespace Ogani.WebApp.Business.Validators.CategoryValidators
 {
     public class CategoryUpdateValidator : AbstractValidator<CategoryUpdateDTO>
     {
+        private static readonly string[] AllowedExtensionsForImage =
+        {
+            ".jpg", ".jpeg", ".png", ".webp"
+        };
+        private const int MaxImageSizeInMB = 2;
+        private const long MaxImageSize = MaxImageSizeInMB * 1024 * 1024;
+
         public CategoryUpdateValidator()
         {
             RuleFor(x => x.Id)
@@ -18,10 +25,21 @@ namespace Ogani.WebApp.Business.Validators.CategoryValidators
 
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Name is required.")
-                .Length(2, 50).WithMessage("Name must be between 2 and 50 characters.");
+                .MinimumLength(2).WithMessage("Name must be minimum 2 characters.")
+                .MaximumLength(50).WithMessage("Name cannot exceed 200 characters.");
 
             RuleFor(x => x.Description)
-                .Length(10, 200).WithMessage("Description must be between 10 and 200 characters.");
+                .MaximumLength(1000).WithMessage("Description cannot exceed 1000 characters.");
+
+            When(x => x.Image is not null, () =>
+            {
+                RuleFor(x => x.Image!)
+                    .Must(file => AllowedExtensionsForImage.Contains(Path.GetExtension(file.FileName).ToLowerInvariant()))
+                    .WithMessage($"Only the following file types are allowed: {string.Join(", ", AllowedExtensionsForImage)}.")
+
+                    .Must(file => file.Length <= MaxImageSize)
+                    .WithMessage($"Image size must be less than {MaxImageSizeInMB} MB.");
+            });
         }
     }
 }

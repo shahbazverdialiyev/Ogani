@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.DTOs.DiscountDTO
 {
-    internal class DiscountCreateDTO
+    public class DiscountCreateDTO
     {
+        public string Code { get; set; } = null!;
+        public decimal DiscountPercentage { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+
+        public ICollection<int> ProductIds { get; set; } = [];
     }
 }

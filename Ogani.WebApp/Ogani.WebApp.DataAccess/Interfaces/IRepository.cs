@@ -16,6 +16,8 @@ namespace Ogani.WebApp.DataAccess.Interfaces
 
         Task<TEntity?> GetByIdAsync(TKey id, bool tracking = false);
 
+        Task<TEntity?> GetForUpdateAsync(int id);
+
         Task<List<TEntity>> GetWhereAsync(Expression<Func<TEntity, bool>> predicate, bool tracking = false);
 
         Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate);

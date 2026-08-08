@@ -9,9 +9,9 @@ namespace Ogani.WebApp.DTOs.CategoryDTO
 {
     public class CategoryReadDTO : BaseDTO<int>
     {
-        public string Name { get; set; } = null!;
-        public string? Description { get; set; }
+        public string Name { get; init; } = null!;
+        public string? Description { get; init; }
 
-        public string? ImageUrl { get; set; }
+        public string? ImageUrl { get; init; }
     }
 }

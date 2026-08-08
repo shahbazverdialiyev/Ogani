@@ -1,0 +1,149 @@
+﻿@using Ogani.WebApp.DTOs.ProductDTO
+@model ProductDetailReadDTO
+
+<div class="container-fluid">
+
+    <h3 class="h3 mb-4 text-gray-800">Product Details</h3>
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header d-flex justify-content-between align-items-center py-3">
+            <h6 class="m-0 font-weight-bold text-primary">@Model.Name</h6>
+
+            <div>
+                <a asp-action="Update"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-info shadow-sm mr-2">
+                    <i class="fas fa-pen"></i> Edit
+                </a>
+
+                <a asp-action="Index"
+                   class="btn btn-secondary shadow-sm">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <!-- Image -->
+                <div class="col-md-4 text-center mb-4">
+
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl"
+                             alt="@Model.Name"
+                             class="img-thumbnail"
+                             style="width:250px;height:250px;object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <div class="border rounded bg-light d-flex align-items-center justify-content-center mx-auto"
+                             style="width:250px;height:250px;">
+                            <div class="text-muted text-center">
+                                <i class="fas fa-image fa-3x mb-2"></i>
+                                <div>No Image</div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+                <!-- Product Information -->
+                <div class="col-md-8">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Name:</strong>
+                            <div class="text-muted">@Model.Name</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Category:</strong>
+                            <div class="text-muted">@(Model.CategoryName ?? "---") </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Price:</strong>
+                            <div class="text-muted">@Model.Price</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Quantity:</strong>
+                            <div class="text-muted">@Model.Quantity</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Weight:</strong>
+                            <div class="text-muted">@Model.Weight</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Availability:</strong>
+                            <div>
+                                <span class="badge @(Model.IsAvailable ? "text-success" : "text-danger")">
+                                    @(Model.IsAvailable ? "Available" : "Unavailable")
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Featured:</strong>
+                            <div>
+                                <span class="badge @(Model.IsFeatured ? "text-success" : "text-danger")">
+                                    @(Model.IsFeatured ? "Yes" : "No")
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Status:</strong>
+                            <div>
+                                <span class="badge @(Model.Status ? "text-success" : "text-danger")">
+                                    @(Model.Status ? "Active" : "Passive")
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <strong>Created Date:</strong>
+                            <div class="text-muted">
+                                @Model.CreatedDate.ToString("dd.MM.yyyy HH:mm:ss")
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <hr />
+
+            <!-- Info -->
+            <div>
+                <h6 class="font-weight-bold text-primary">Info</h6>
+
+                <p class="text-muted">
+                    @(string.IsNullOrWhiteSpace(Model.Info)
+                        ? "No additional information."
+                        : Model.Info)
+                </p>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-4">
+                <h6 class="font-weight-bold text-primary">Description</h6>
+
+                <p class="text-muted">
+                    @(string.IsNullOrWhiteSpace(Model.Description)
+                        ? "No description."
+                        : Model.Description)
+                </p>
+            </div>
+
+        </div>
+    </div>
+</div>
