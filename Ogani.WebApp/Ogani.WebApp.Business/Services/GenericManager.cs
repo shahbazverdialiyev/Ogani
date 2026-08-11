@@ -44,7 +44,7 @@ namespace Ogani.WebApp.Business.Services
             return _mapper.Map<TDetailRead>(entity);
         }
 
-        public virtual async Task<List<TRead>> GetAllAsync()
+        public virtual async Task<IReadOnlyCollection<TRead>> GetAllAsync()
         {
             List<TEntity> entities = await _uoW.GetRepository<TEntity, int>().GetAllAsync();
             return _mapper.Map<List<TRead>>(entities);

@@ -13,7 +13,7 @@ namespace Ogani.WebApp.Business.Services.Interfaces
         where TCreate : class
         where TUpdate : BaseDTO<int>
     {
-        Task<List<TRead>> GetAllAsync();
+        Task<IReadOnlyCollection<TRead>> GetAllAsync();
         Task<TDetailRead> GetByIdAsync(int id);
         Task<TUpdate> GetForUpdateAsync(int id);
         Task AddAsync(TCreate entity);

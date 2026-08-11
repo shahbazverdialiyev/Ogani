@@ -18,6 +18,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index() => View(await _productService.GetAllAsync());
 
         [HttpGet]

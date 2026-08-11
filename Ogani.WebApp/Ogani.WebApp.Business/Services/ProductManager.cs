@@ -25,10 +25,10 @@ namespace Ogani.WebApp.Business.Services
             _fileService = fileService;
         }
 
-        public override async Task<List<ProductReadDTO>> GetAllAsync()
+        public override async Task<IReadOnlyCollection<ProductReadDTO>> GetAllAsync()
         {
-            List<Product> entities = await _uoW.ProductRepository.GetAllAsync();
-            return _mapper.Map<List<ProductReadDTO>>(entities);
+            IReadOnlyCollection<Product> entities = await _uoW.ProductRepository.GetAllAsync();
+            return _mapper.Map<IReadOnlyCollection<ProductReadDTO>>(entities);
         }
 
         public override async Task<ProductUpdateDTO> GetForUpdateAsync(int id)
