@@ -17,7 +17,8 @@ namespace Ogani.WebApp.DataAccess.Configurations
                    .IsRequired()
                    .HasMaxLength(200);
 
-            builder.HasIndex(p => p.Name);
+            builder.HasIndex(p => p.Name)
+                   .IsUnique();
 
             builder.Property(p => p.Description)
                    .HasMaxLength(1000);

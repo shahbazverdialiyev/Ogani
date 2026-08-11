@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Ogani.WebApp.DataAccess.Contexts;
 
@@ -11,9 +12,11 @@ using Ogani.WebApp.DataAccess.Contexts;
 namespace Ogani.WebApp.DataAccess.Migrations
 {
     [DbContext(typeof(OganiDbContext))]
-    partial class OganiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260811153441_MakeProductNameUnique")]
+    partial class MakeProductNameUnique
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

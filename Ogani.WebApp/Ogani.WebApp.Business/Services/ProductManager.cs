@@ -25,30 +25,6 @@ namespace Ogani.WebApp.Business.Services
             _fileService = fileService;
         }
 
-        private async Task ValidateCategoryIdAsync(int? categoryId)
-        {
-            if (!categoryId.HasValue)
-                return;
-
-            bool categoryExists = await _uoW.CategoryRepository.AnyAsync(c => c.Id == categoryId.Value);
-
-            if (!categoryExists)
-                throw new NotFoundException(nameof(Category), categoryId.Value);
-        }
-
-        private async Task<List<Discount>> GetDiscountsAsync(ICollection<int> discountIds)
-        {
-            if (discountIds.Count == 0)
-                return [];
-
-            List<Discount> discounts = await _uoW.DiscountRepository.GetWhereAsync(d => discountIds.Contains(d.Id), tracking: true);
-
-            if (discountIds.Count != discounts.Count)
-                throw new NotFoundException("One or more selected discounts were not found.");
-
-            return discounts;
-        }
-
         public override async Task<List<ProductReadDTO>> GetAllAsync()
         {
             List<Product> entities = await _uoW.ProductRepository.GetAllAsync();
@@ -71,6 +47,9 @@ namespace Ogani.WebApp.Business.Services
         {
             ValidationResult validationResult = await _createValidator.ValidateAsync(dto);
 
+            if (await _uoW.ProductRepository.AnyAsync(x => x.Name == dto.Name))
+                validationResult.Errors.Add(new ValidationFailure("Name", "Product with this name already exists."));
+
             if (!validationResult.IsValid)
                 throw new BusinessValidationException(validationResult.Errors);
 
@@ -90,6 +69,9 @@ namespace Ogani.WebApp.Business.Services
         public override async Task UpdateAsync(ProductUpdateDTO dto)
         {
             ValidationResult validationResult = await _updateValidator.ValidateAsync(dto);
+
+            if (await _uoW.ProductRepository.AnyAsync(x => x.Name == dto.Name && x.Id != dto.Id))
+                validationResult.Errors.Add(new ValidationFailure("Name", "Another product with this name already exists."));
 
             if (!validationResult.IsValid)
                 throw new BusinessValidationException(validationResult.Errors);
@@ -142,6 +124,30 @@ namespace Ogani.WebApp.Business.Services
 
             List<ProductReadDTO> productsDto = _mapper.Map<List<ProductReadDTO>>(products);
             return productsDto;
+        }
+
+        private async Task ValidateCategoryIdAsync(int? categoryId)
+        {
+            if (!categoryId.HasValue)
+                return;
+
+            bool categoryExists = await _uoW.CategoryRepository.AnyAsync(c => c.Id == categoryId.Value);
+
+            if (!categoryExists)
+                throw new NotFoundException(nameof(Category), categoryId.Value);
+        }
+
+        private async Task<List<Discount>> GetDiscountsAsync(ICollection<int> discountIds)
+        {
+            if (discountIds.Count == 0)
+                return [];
+
+            List<Discount> discounts = await _uoW.DiscountRepository.GetWhereAsync(d => discountIds.Contains(d.Id), tracking: true);
+
+            if (discountIds.Count != discounts.Count)
+                throw new NotFoundException("One or more selected discounts were not found.");
+
+            return discounts;
         }
     }
 }
