@@ -1,0 +1,99 @@
+﻿@using Ogani.WebApp.DTOs.CategoryDTO
+@model CategoryDetailReadDTO
+
+@section Styles {
+    <link rel="stylesheet" href="~/admin/css/custom/category/category-detail.css" />
+}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="h3 mb-0 text-gray-800 font-weight-bold">Category Details</h3>
+
+        <a asp-action="Index" class="btn btn-secondary shadow-sm rounded-pill px-3">
+            <i class="fas fa-arrow-left mr-1"></i> Back to List
+        </a>
+    </div>
+
+    <!-- Category Overview Card -->
+    <div class="card shadow mb-4 border-left-primary border-0 rounded-lg">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center bg-white border-bottom-0">
+            <div class="d-flex align-items-center">
+                <h6 class="m-0 font-weight-bold text-primary mr-3">
+                    Category Overview — @Model.Name
+                </h6>
+                <span class="badge @(Model.Status ? "badge-soft-success" : "badge-soft-danger") px-2 py-1">
+                    <i class="fas @(Model.Status ? "fa-check-circle" : "fa-times-circle") mr-1"></i>
+                    @(Model.Status ? "Active" : "Deactive")
+                </span>
+            </div>
+
+            <div>
+                <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-warning btn-sm mr-1 shadow-sm rounded-pill px-3" title="Edit">
+                    <i class="fas fa-edit mr-1"></i> Edit
+                </a>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this category?');">
+                    <button type="submit" class="btn btn-danger btn-sm shadow-sm rounded-pill px-3" title="Delete">
+                        <i class="fas fa-trash-alt mr-1"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="row align-items-center py-2">
+
+                <!-- Image Section -->
+                <div class="col-md-3 text-center mb-3 mb-md-0">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl"
+                             alt="@Model.Name"
+                             class="img-thumbnail shadow-sm category-detail-img rounded" />
+                    }
+                    else
+                    {
+                        <div class="border rounded bg-light d-flex flex-column align-items-center justify-content-center mx-auto shadow-sm category-detail-img">
+                            <i class="fas fa-image fa-3x mb-2 text-muted opacity-50"></i>
+                            <span class="small text-muted">No Image</span>
+                        </div>
+                    }
+                </div>
+
+                <!-- Info & Description -->
+                <div class="col-md-9">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div>
+                            <label class="text-xs font-weight-bold text-primary text-uppercase mb-1">Category Name</label>
+                            <h4 class="font-weight-bold text-gray-800 mb-0">@Model.Name</h4>
+                        </div>
+                        <div class="text-right">
+                            <label class="text-xs font-weight-bold text-muted text-uppercase mb-1">Created Date</label>
+                            <div class="text-gray-800 small font-weight-bold">
+                                <i class="far fa-calendar-alt text-primary mr-1"></i>
+                                @Model.CreatedDate.ToString("dd MMM yyyy, HH:mm")
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="sidebar-divider my-2">
+
+                    <div>
+                        <label class="text-xs font-weight-bold text-primary text-uppercase mb-1">Description</label>
+                        <p class="text-gray-700 mb-0 category-detail-desc">
+                            @(string.IsNullOrWhiteSpace(Model.Description)
+                                ? "No description available."
+                                : Model.Description)
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products View Component -->
+    @await Component.InvokeAsync("CategoryProducts", new { categoryId = Model.Id })
+
+</div>

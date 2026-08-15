@@ -12,9 +12,8 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
 {
     public class EFCoreCategoryRepository : EFCoreRepository<Category, int>, ICategoryRepository
     {
-        public EFCoreCategoryRepository(OganiDbContext context) : base(context)
-        {
-        }
+        public EFCoreCategoryRepository(OganiDbContext context) : base(context) { }
+
         public async Task<List<Category>> GetCategoriesWithProductsAsync(bool tracking = false)
         {
             IQueryable<Category> query = Table.Include(c => c.Products);

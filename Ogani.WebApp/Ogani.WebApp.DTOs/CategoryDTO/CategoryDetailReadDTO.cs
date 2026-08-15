@@ -1,4 +1,5 @@
 ﻿using Ogani.WebApp.DTOs.Base;
+using Ogani.WebApp.DTOs.ProductDTO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,8 +11,6 @@ namespace Ogani.WebApp.DTOs.CategoryDTO
 {
     public class CategoryDetailReadDTO : CategoryReadDTO
     {
-        public IReadOnlyCollection<string> ProductNames { get; init; } = [];
-
         public DateTime CreatedDate { get; init; }
     }
 }

@@ -1,0 +1,89 @@
+﻿@using Ogani.WebApp.DTOs.CategoryDTO
+@model CategoryUpdateDTO
+
+@section Styles {
+    <link rel="stylesheet" href="~/admin/css/custom/category/category-form.css" />
+}
+
+<div class="container-fluid">
+    <div class="card mb-4 col-md-8 mx-auto shadow-sm border-0 rounded-lg">
+
+        <form asp-action="Update" method="post" enctype="multipart/form-data">
+
+            <input type="hidden" asp-for="Id" />
+
+            <!-- Header: Başlıq və Active Switch Yan-Yana -->
+            <div class="card-header py-3 d-flex justify-content-between align-items-center bg-white border-bottom-0">
+                <h6 class="m-0 font-weight-bold text-primary">Update Category</h6>
+
+                <!-- Status Switch -->
+                <div class="custom-control custom-switch">
+                    <input asp-for="Status" type="checkbox" class="custom-control-input" id="categoryStatusSwitch">
+                    <label class="custom-control-label font-weight-bold text-success cursor-pointer" for="categoryStatusSwitch">
+                        Active
+                    </label>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <!-- Kateqoriya Adı -->
+                <div class="form-group mb-3">
+                    <label asp-for="Name" class="font-weight-bold"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <!-- Description Field -->
+                <div class="form-group mb-3">
+                    <label asp-for="Description" class="font-weight-bold"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3" placeholder="Category description..."></textarea>
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+
+                <!-- Şəkil Seçmə Hissəsi -->
+                <div class="form-group mb-3">
+                    <label asp-for="Image" class="font-weight-bold d-block"></label>
+
+                    <div class="image-preview-container mb-2 text-center p-2 rounded position-relative"
+                         onclick="triggerFileInput(this.parentNode);">
+
+                        <img src="@(!string.IsNullOrEmpty(Model?.ImageUrl) ? Url.Content(Model.ImageUrl) : "#")"
+                             alt="Category Image"
+                             class="@(string.IsNullOrEmpty(Model?.ImageUrl) ? "d-none" : "") image-preview-img" />
+
+                        <div class="upload-placeholder @(!string.IsNullOrEmpty(Model?.ImageUrl) ? "d-none" : "") text-center">
+                            <i class="fas fa-plus fa-1x text-muted opacity-50 mb-1 d-block"></i>
+                            <span class="d-block text-muted opacity-75 upload-placeholder-text">Şəkil əlavə et</span>
+                        </div>
+
+                        <button type="button"
+                                class="btn btn-danger btn-sm position-absolute @(string.IsNullOrEmpty(Model?.ImageUrl) ? "d-none" : "") remove-img-btn"
+                                onclick="removeSelectedImage(this, event);"
+                                title="Remove Image">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <input type="hidden" asp-for="RemoveExistingImage" class="remove-existing-image-flag" value="false" />
+
+                    <input asp-for="Image" type="file" accept="image/*" class="d-none" onchange="previewImage(this);" />
+                    <span asp-validation-for="Image" class="text-danger small d-block"></span>
+                </div>
+
+                <hr />
+
+                <div class="d-flex justify-content-end">
+                    <a asp-action="Index" class="btn btn-secondary rounded-pill px-4 mr-2">Cancel</a>
+                    <button type="submit" class="btn btn-warning rounded-pill px-4">Update</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/admin/js/custom/common/image-upload.js"></script>
+}

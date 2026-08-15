@@ -1,5 +1,145 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@using Ogani.WebApp.DTOs.CategoryDTO
+@model IReadOnlyCollection<CategoryReadDTO>
+
+@section Styles {
+    <link rel="stylesheet" href="~/admin/css/custom/category/category-index.css" />
 }
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="h3 mb-0 text-gray-800 font-weight-bold">Categories</h3>
+
+        <a asp-action="Create" class="btn btn-success shadow-sm rounded-pill px-3">
+            <i class="fas fa-plus mr-1"></i> New Category
+        </a>
+    </div>
+
+    <!-- Main Card Container -->
+    <div class="card shadow mb-4 border-0 rounded-lg">
+        <div class="card-header d-flex justify-content-between align-items-center py-3 bg-white border-bottom-0">
+            <h6 class="m-0 font-weight-bold text-primary">
+                Categories List
+            </h6>
+
+            <div>
+                @if (TempData["NotifySuccess"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show mb-0 py-2" role="alert">
+                        <i class="fas fa-check-circle mr-2"></i> @TempData["NotifySuccess"]
+                        <button type="button" class="close py-2" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+
+                @if (TempData["NotifyError"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mb-0 py-2" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i> @TempData["NotifyError"]
+                        <button type="button" class="close py-2" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            @if (Model == null || !Model.Any())
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="fas fa-folder-open fa-3x mb-3 d-block"></i>
+                    <span>No categories found.</span>
+                </div>
+            }
+            else
+            {
+                @foreach (CategoryReadDTO item in Model)
+                {
+                    <!-- Kart üzərinə basdıqda Detail-ə keçir -->
+                    <div class="card shadow-sm mb-3 border-left-primary category-item-card position-relative"
+                         onclick="window.location.href='@Url.Action("Detail", new { id = item.Id })'">
+
+                        <div class="card-body p-3">
+                            <div class="d-flex align-items-start">
+
+                                <!-- Sol tərəfdə Şəkil -->
+                                <div class="mr-3 flex-shrink-0">
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl"
+                                             alt="@item.Name"
+                                             class="rounded border category-img" />
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light rounded border d-flex align-items-center justify-content-center category-img">
+                                            <i class="fas fa-image fa-lg text-muted"></i>
+                                        </div>
+                                    }
+                                </div>
+
+                                <!-- Orta Məzmun Və Yuxarı Sağda Status -->
+                                <div class="flex-grow-1 min-w-0" style="min-width: 0;">
+
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <h5 class="font-weight-bold text-primary mb-0 text-truncate mr-2">
+                                            @item.Name
+                                        </h5>
+
+                                        <!-- Sağ Yuxarıda Status Badge-i -->
+                                        <div class="flex-shrink-0">
+                                            @if (item.Status)
+                                            {
+                                                <span class="badge badge-soft-success">Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-soft-danger">Deactive</span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <p class="text-muted small mb-2 category-desc">
+                                        @(string.IsNullOrWhiteSpace(item.Description)
+                                            ? "No description available."
+                                            : item.Description)
+                                    </p>
+
+                                    <!-- Aşağı Düşürülmüş İkonlar (Update Və Delete) -->
+                                    <div class="d-flex justify-content-end align-items-center pt-2 border-top">
+
+                                        <a asp-action="Update" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-light text-warning mr-1 rounded-circle action-btn"
+                                           title="Edit"
+                                           onclick="event.stopPropagation();">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+
+                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline"
+                                              onsubmit="return confirm('Are you sure you want to delete this category?');"
+                                              onclick="event.stopPropagation();">
+                                            <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle action-btn" title="Delete">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </form>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
+    </div>
+
+</div>

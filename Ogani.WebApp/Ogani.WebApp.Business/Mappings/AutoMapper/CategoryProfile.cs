@@ -16,11 +16,12 @@ namespace Ogani.WebApp.Business.Mappings.AutoMapper
         {
             CreateMap<Category, CategoryReadDTO>();
 
-            CreateMap<Category, CategoryDetailReadDTO>()
-                .ForMember(dest => dest.ProductNames, opt => opt.MapFrom(src => src.Products.Select(x => x.Name)));
+            CreateMap<Category, CategoryDetailReadDTO>();
 
             CreateMap<CategoryCreateDTO, Category>()
                 .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
+            CreateMap<Category,CategoryUpdateDTO>();
 
             CreateMap<CategoryUpdateDTO, Category>()
                 .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());

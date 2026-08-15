@@ -1,0 +1,45 @@
+﻿/* Image Preview Container Styles */
+.image-preview-container {
+    width: 130px;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    background-color: #fafafa;
+    border: 2px dashed #ccc;
+    transition: all 0.2s ease-in-out;
+}
+
+    .image-preview-container:hover {
+        border-color: #4e73df;
+        background-color: #f8f9fc;
+    }
+
+/* Image Inside Box */
+.image-preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Placeholder Text */
+.upload-placeholder-text {
+    font-size: 11px;
+}
+
+/* Remove Button Styling */
+.remove-img-btn {
+    top: 4px;
+    right: 4px;
+    padding: 1px 6px;
+    border-radius: 50%;
+    font-size: 11px;
+    z-index: 2;
+}
+
+/* Helper Utilities */
+.cursor-pointer {
+    cursor: pointer;
+}
