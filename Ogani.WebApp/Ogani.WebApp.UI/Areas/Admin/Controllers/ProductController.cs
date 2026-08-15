@@ -57,7 +57,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
             try
             {
                 int productId = await _productService.AddAsync(product);
-                TempData["NotifySuccess"] = "Created new Product";
+                TempData["NotifySuccess"] = "Created new product";
 
                 return RedirectToAction(nameof(Detail), new { id=productId});
             }
@@ -130,7 +130,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
             try
             {
                 await _productService.DeleteAsync(id);
-                TempData["NotifySuccess"] = "Deleted Product";
+                TempData["NotifySuccess"] = "Successfully deleted";
             }
             catch (NotFoundException ex)
             {

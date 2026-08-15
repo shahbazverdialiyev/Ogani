@@ -45,7 +45,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
             try
             {
                 await _categoryService.AddAsync(dto);
-                TempData["NotifySuccess"] = "Created new Category";
+                TempData["NotifySuccess"] = "Created new category";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -117,7 +117,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
             try
             {
                 await _categoryService.DeleteAsync(id);
-                TempData["NotifySuccess"] = "Deleted Category";
+                TempData["NotifySuccess"] = "Successfully deleted";
             }
             catch (NotFoundException ex)
             {
