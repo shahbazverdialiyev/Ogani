@@ -1,106 +1,199 @@
 ﻿@using Ogani.WebApp.DTOs.ProductDTO
 @model IReadOnlyCollection<ProductReadDTO>
 
-<style>
-    table th, table td {
-        vertical-align: middle !important;
-    }
-</style>
+@section Styles {
+    <link rel="stylesheet" href="~/admin/css/custom/product/product-index.css" />
+}
 
 <div class="container-fluid">
 
     <!-- Page Heading -->
-    <h3 class="h3 mb-4 text-gray-800">Products</h3>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="h3 mb-0 text-gray-800 font-weight-bold">Products</h3>
+        <a asp-action="Create" class="btn btn-success shadow-sm rounded-pill px-3">
+            <i class="fas fa-plus mr-1"></i> New Product
+        </a>
+    </div>
 
     <!-- DataTales Example -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-flex justify-content-between align-items-center">
-
+    <div class="card shadow mb-4 border-0 rounded-lg">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center bg-white border-bottom-0">
             <h6 class="m-0 font-weight-bold text-primary">Products List</h6>
 
-            @if (TempData["NotifySuccess"] != null)
-            {
-                <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
-                    <i class="fas fa-check-circle mr-2"></i> @TempData["NotifySuccess"]
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            }
+            <div>
+                @if (TempData["NotifySuccess"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show mb-0 py-2" role="alert">
+                        <i class="fas fa-check-circle mr-2"></i> @TempData["NotifySuccess"]
+                        <button type="button" class="close py-2" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
 
-            @if (TempData["NotifyError"] != null)
-            {
-                <div class="alert alert-danger alert-dismissible fade show mb-3" role="alert">
-                    <i class="fas fa-exclamation-triangle mr-2"></i> @TempData["NotifyError"]
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            }
-            <a asp-action="Create" class="btn btn-success shadow-sm">New Product</a>
+                @if (TempData["NotifyError"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show mb-0 py-2" role="alert">
+                        <i class="fas fa-exclamation-triangle mr-2"></i> @TempData["NotifyError"]
+                        <button type="button" class="close py-2" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                }
+            </div>
         </div>
-        <div class="card-body">
+
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-bordered table-striped table-hover text-center" width="100%">
-                    <thead>
+                <table class="table table-hover text-center align-middle mb-0" width="100%">
+                    <thead class="bg-light text-muted text-uppercase small font-weight-bold">
                         <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Category</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Availablity</th>
-                            <th>Featured</th>
-                            <th>Created Date</th>
-                            <th>Status</th>
-                            <th class="col-2">Actions</th>
+                            <th class="border-top-0">Image</th>
+                            <th class="border-top-0 text-left">Name</th>
+                            <th class="border-top-0 text-left">Category</th>
+                            <th class="border-top-0">Quantity</th>
+                            <th class="border-top-0">Price</th>
+                            <th class="border-top-0">Available</th>
+                            <th class="border-top-0">Featured</th>
+                            <th class="border-top-0">Created Date</th>
+                            <th class="border-top-0">Status</th>
+                            <th class="border-top-0">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (ProductReadDTO item in Model)
+                        @if (Model == null || !Model.Any())
                         {
                             <tr>
-                                <td>
-                                    <img style="width: 50px; height: 50px; object-fit: cover;" src="@item.ImageUrl" width="60" />
-                                </td>
-                                <td class="text-left">@item.Name</td>
-                                <td class="text-left">@(item.CategoryName ?? "-")</td>
-                                <td>@item.Quantity</td>
-                                <td>@($"{item.Price:0.00} $")</td>
-                                <td>
-                                    <span class="badge @(item.IsAvailable ? "text-success" : "text-danger")">
-                                        @(item.IsAvailable ? "Yes" : "No")
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge @(item.IsFeatured ? "text-success" : "text-danger")">
-                                        @(item.IsFeatured ? "Yes" : "No")
-                                    </span>
-                                </td>
-                                <td class="text-muted small">@item.CreatedDate.ToString("dd.MM.yyyy - HH:mm:ss")</td>
-                                <td>
-                                    <span class="badge @(item.Status ? "text-success" : "text-danger")">
-                                        @(item.Status ? "Active" : "Passive")
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="d-flex justify-content-center align-items-center">
-                                        <a asp-action="Detail" asp-route-id="@item.Id" class="btn btn-primary btn-sm mr-2" title="details">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-
-                                        <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-info btn-sm mr-2" title="edit">
-                                            <i class="fas fa-pen-square"></i>
-                                        </a>
-
-                                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Are you sure?');">
-                                            <button type="submit" class="btn btn-danger btn-sm" title="delete">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
+                                <td colspan="10" class="text-center py-5 text-muted">
+                                    <i class="fas fa-box-open fa-3x mb-3 d-block"></i>
+                                    <span>No products found.</span>
                                 </td>
                             </tr>
+                        }
+                        else
+                        {
+                            @foreach (ProductReadDTO item in Model)
+                            {
+                                <tr>
+                                    <!-- 1. Image -->
+                                    <td>
+                                        <a asp-action="Detail" asp-route-id="@item.Id">
+                                            @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                            {
+                                                <img src="@item.ImageUrl" alt="@item.Name" class="rounded shadow-sm product-img" />
+                                            }
+                                            else
+                                            {
+                                                <div class="bg-light rounded d-inline-flex align-items-center justify-content-center product-img border">
+                                                    <i class="fas fa-image text-muted"></i>
+                                                </div>
+                                            }
+                                        </a>
+                                    </td>
+
+                                    <!-- 2. Product Name (Tıkladıqda Product Detail-ə gedir) -->
+                                    <td class="text-left font-weight-bold">
+                                        <a asp-action="Detail" asp-route-id="@item.Id" class="text-dark hover-link text-decoration-none">
+                                            @item.Name
+                                        </a>
+                                    </td>
+
+                                    <!-- 3. Category Name (Tıkladıqda Category Detail-ə gedir) -->
+                                    <td class="text-left">
+                                        @if (item.CategoryId != null && item.CategoryId > 0)
+                                        {
+                                            <a asp-controller="Category" asp-action="Detail" asp-route-id="@item.CategoryId" class="badge badge-light text-secondary border px-2 py-1 hover-link text-decoration-none">
+                                                <i class="fas fa-folder mr-1 text-muted"></i>@(item.CategoryName ?? "-")
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-light text-secondary border px-2 py-1">
+                                                <i class="fas fa-folder mr-1 text-muted"></i>@(item.CategoryName ?? "-")
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <!-- 4. Quantity Status -->
+                                    <td>
+                                        @if (item.Quantity <= 5)
+                                        {
+                                            <span class="badge badge-soft-danger px-2 py-1">
+                                                <i class="fas fa-exclamation-circle mr-1"></i>@item.Quantity (Low)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="font-weight-bold text-secondary">@item.Quantity</span>
+                                        }
+                                    </td>
+
+                                    <!-- 5. Price -->
+                                    <td class="font-weight-bold text-success">
+                                        $@item.Price.ToString("F2")
+                                    </td>
+
+                                    <!-- 6. Availability -->
+                                    <td>
+                                        @if (item.IsAvailable)
+                                        {
+                                            <span class="badge badge-soft-success"><i class="fas fa-check mr-1"></i>In Stock</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-soft-secondary"><i class="fas fa-times mr-1"></i>Out of Stock</span>
+                                        }
+                                    </td>
+
+                                    <!-- 7. Featured Star -->
+                                    <td>
+                                        @if (item.IsFeatured)
+                                        {
+                                            <i class="fas fa-star text-warning" title="Featured Product"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="far fa-star text-muted" title="Standard Product"></i>
+                                        }
+                                    </td>
+
+                                    <!-- 8. Created Date -->
+                                    <td class="text-muted small">
+                                        @item.CreatedDate.ToString("dd MMM yyyy")
+                                    </td>
+
+                                    <!-- 9. Status -->
+                                    <td>
+                                        @if (item.Status)
+                                        {
+                                            <span class="badge badge-soft-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-soft-danger">Deactive</span>
+                                        }
+                                    </td>
+
+                                    <!-- 10. Actions -->
+                                    <td>
+                                        <div class="d-flex justify-content-center align-items-center">
+                                            <a asp-action="Detail" asp-route-id="@item.Id" class="btn btn-sm btn-light text-info mr-1 rounded-circle action-btn" title="Details">
+                                                <i class="fas fa-info-circle"></i>
+                                            </a>
+
+                                            <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-sm btn-light text-warning mr-1 rounded-circle action-btn" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+
+                                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                                                <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle action-btn" title="Delete">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
                         }
                     </tbody>
                 </table>

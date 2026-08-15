@@ -1,146 +1,215 @@
-﻿@using Ogani.WebApp.DTOs.ProductDTO
+﻿@using Ogani.WebApp.DTOs.DiscountDTO
+@using Ogani.WebApp.DTOs.ProductDTO
 @model ProductDetailReadDTO
+
+@section Styles {
+    <link rel="stylesheet" href="~/admin/css/custom/product/product-detail.css" />
+}
 
 <div class="container-fluid">
 
-    <h3 class="h3 mb-4 text-gray-800">Product Details</h3>
+    <!-- Header & Actions -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="h3 mb-0 text-gray-800 font-weight-bold">Product Details</h3>
 
-    <div class="card shadow mb-4">
+        <div>
+            <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-warning shadow-sm rounded-pill px-3 mr-2">
+                <i class="fas fa-pen mr-1"></i> Edit
+            </a>
+            <a asp-action="Index" class="btn btn-secondary shadow-sm rounded-pill px-3">
+                <i class="fas fa-arrow-left mr-1"></i> Back
+            </a>
+        </div>
+    </div>
 
-        <div class="card-header d-flex justify-content-between align-items-center py-3">
+    <!-- Product Card -->
+    <div class="card shadow mb-4 border-left-primary border-0 rounded-lg">
+
+        <div class="card-header py-3 d-flex justify-content-between align-items-center bg-white border-bottom-0">
             <h6 class="m-0 font-weight-bold text-primary">@Model.Name</h6>
-
-            <div>
-                <a asp-action="Update"
-                   asp-route-id="@Model.Id"
-                   class="btn btn-info shadow-sm mr-2">
-                    <i class="fas fa-pen"></i> Edit
-                </a>
-
-                <a asp-action="Index"
-                   class="btn btn-secondary shadow-sm">
-                    <i class="fas fa-arrow-left"></i> Back
-                </a>
-            </div>
+            <span class="badge @(Model.Status ? "badge-soft-success" : "badge-soft-danger") px-3 py-2">
+                <i class="fas @(Model.Status ? "fa-check-circle" : "fa-times-circle") mr-1"></i>
+                @(Model.Status ? "Active" : "Deactive")
+            </span>
         </div>
 
         <div class="card-body">
+            <div class="row align-items-start">
 
-            <div class="row">
-
-                <!-- Image -->
-                <div class="col-md-4 text-center mb-4">
-
+                <!-- 🖼️ Image -->
+                <div class="col-md-4 text-center mb-4 mb-md-0">
                     @if (!string.IsNullOrEmpty(Model.ImageUrl))
                     {
                         <img src="@Model.ImageUrl"
                              alt="@Model.Name"
-                             class="img-thumbnail"
-                             style="width:250px;height:250px;object-fit:cover;" />
+                             class="img-thumbnail shadow-sm product-detail-img rounded" />
                     }
                     else
                     {
-                        <div class="border rounded bg-light d-flex align-items-center justify-content-center mx-auto"
-                             style="width:250px;height:250px;">
+                        <div class="border rounded bg-light d-flex align-items-center justify-content-center mx-auto shadow-sm product-detail-img">
                             <div class="text-muted text-center">
-                                <i class="fas fa-image fa-3x mb-2"></i>
+                                <i class="fas fa-image fa-3x mb-2 opacity-50"></i>
                                 <div>No Image</div>
                             </div>
                         </div>
                     }
-
                 </div>
 
-                <!-- Product Information -->
+                <!-- 📝 Info Fields -->
                 <div class="col-md-8">
-
                     <div class="row">
 
+                        <!-- Name -->
                         <div class="col-md-6 mb-3">
-                            <strong>Name:</strong>
-                            <div class="text-muted">@Model.Name</div>
+                            <label class="text-xs font-weight-bold text-primary text-uppercase mb-1 d-block">Name</label>
+                            <div class="text-gray-800 font-weight-bold">@Model.Name</div>
                         </div>
 
+                        <!-- 🔗 Category (LINK kimi) -->
                         <div class="col-md-6 mb-3">
-                            <strong>Category:</strong>
-                            <div class="text-muted">@(Model.CategoryName ?? "---") </div>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <strong>Price:</strong>
-                            <div class="text-muted">@Model.Price</div>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <strong>Quantity:</strong>
-                            <div class="text-muted">@Model.Quantity</div>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <strong>Weight:</strong>
-                            <div class="text-muted">@Model.Weight</div>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <strong>Availability:</strong>
+                            <label class="text-xs font-weight-bold text-primary text-uppercase mb-1 d-block">Category</label>
                             <div>
-                                <span class="badge @(Model.IsAvailable ? "text-success" : "text-danger")">
-                                    @(Model.IsAvailable ? "Available" : "Unavailable")
+                                @if (Model.CategoryId.HasValue)
+                                {
+                                    <a asp-controller="Category"
+                                       asp-action="Detail"
+                                       asp-route-id="@Model.CategoryId"
+                                       class="badge badge-light border text-primary px-2 py-1 shadow-sm text-decoration-none hover-link"
+                                       title="View Category Details">
+                                        <i class="fas fa-folder mr-1 text-warning"></i>
+                                        @(Model.CategoryName ?? "Category Detail")
+                                        <i class="fas fa-external-link-alt ml-1 small"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small italic">Uncategorized</span>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="col-md-6 mb-3">
+                            <label class="text-xs font-weight-bold text-primary text-uppercase mb-1 d-block">Price</label>
+                            <div class="text-success font-weight-bold product-detail-price">
+                                $@Model.Price
+                            </div>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="col-md-6 mb-3">
+                            <label class="text-xs font-weight-bold text-primary text-uppercase mb-1 d-block">Quantity / Stock</label>
+                            <div class="text-gray-800 font-weight-bold">
+                                <i class="fas fa-cubes text-muted mr-1"></i> @Model.Quantity
+                            </div>
+                        </div>
+
+                        <!-- Weight -->
+                        <div class="col-md-6 mb-3">
+                            <label class="text-xs font-weight-bold text-primary text-uppercase mb-1 d-block">Weight</label>
+                            <div class="text-gray-800">
+                                @(Model.Weight > 0 ? $"{Model.Weight} kg" : "---")
+                            </div>
+                        </div>
+
+                        <!-- Availability -->
+                        <div class="col-md-6 mb-3">
+                            <label class="text-xs font-weight-bold text-primary text-uppercase mb-1 d-block">Availability</label>
+                            <div>
+                                <span class="badge @(Model.IsAvailable ? "badge-soft-success" : "badge-soft-danger")">
+                                    @(Model.IsAvailable ? "In Stock" : "Out of Stock")
                                 </span>
                             </div>
                         </div>
 
+                        <!-- Featured -->
                         <div class="col-md-6 mb-3">
-                            <strong>Featured:</strong>
+                            <label class="text-xs font-weight-bold text-primary text-uppercase mb-1 d-block">Featured</label>
                             <div>
-                                <span class="badge @(Model.IsFeatured ? "text-success" : "text-danger")">
-                                    @(Model.IsFeatured ? "Yes" : "No")
+                                <span class="badge @(Model.IsFeatured ? "badge-info" : "badge-secondary") px-2 py-1">
+                                    <i class="fas @(Model.IsFeatured ? "fa-star" : "fa-star-half-alt") mr-1"></i>
+                                    @(Model.IsFeatured ? "Featured" : "Standard")
                                 </span>
                             </div>
                         </div>
 
+                        <!-- 🔗 Discounts (LINK kimi) -->
                         <div class="col-md-6 mb-3">
-                            <strong>Status:</strong>
+                            <label class="text-xs font-weight-bold text-primary text-uppercase mb-1 d-block">Discounts</label>
                             <div>
-                                <span class="badge @(Model.Status ? "text-success" : "text-danger")">
-                                    @(Model.Status ? "Active" : "Passive")
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6 mb-3">
-                            <strong>Created Date:</strong>
-                            <div class="text-muted">
-                                @Model.CreatedDate.ToString("dd.MM.yyyy HH:mm:ss")
+                                @if (Model.Discounts != null && Model.Discounts.Any())
+                                {
+                                    @foreach (var discount in Model.Discounts)
+                                    {
+                                        <a asp-controller="Discount"
+                                           asp-action="Detail"
+                                           asp-route-id="@discount.Id"
+                                           class="badge badge-warning text-dark border mr-1 mb-1 px-2 py-1 text-decoration-none shadow-sm hover-link"
+                                           title="View Discount Details">
+                                            <i class="fas fa-tag mr-1"></i>@discount.Code
+                                        </a>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted small italic">No active discounts</span>
+                                }
                             </div>
                         </div>
 
                     </div>
 
+                    <hr class="sidebar-divider my-2">
+
+                    <!-- Dates Section -->
+                    <div class="row mt-3 bg-light rounded p-2 mx-0 border">
+                        <div class="col-md-6 mb-2 mb-md-0">
+                            <span class="text-xs font-weight-bold text-muted text-uppercase d-block">Created Date</span>
+                            <div class="text-gray-800 small font-weight-bold">
+                                <i class="far fa-calendar-alt text-primary mr-1"></i>
+                                @Model.CreatedDate.ToString("dd.MM.yyyy HH:mm")
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <span class="text-xs font-weight-bold text-muted text-uppercase d-block">Last Modified Date</span>
+                            <div class="text-gray-800 small font-weight-bold">
+                                @if (Model.ModifiedDate.HasValue)
+                                {
+                                    <i class="far fa-clock text-warning mr-1"></i>
+                                    @Model.ModifiedDate.Value.ToString("dd.MM.yyyy HH:mm")
+                                }
+                                else
+                                {
+                                    <span class="text-muted font-weight-normal italic">
+                                        <i class="fas fa-minus-circle mr-1 text-secondary"></i> Never modified
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
-            <hr />
+            <hr class="my-4">
 
-            <!-- Info -->
-            <div>
-                <h6 class="font-weight-bold text-primary">Info</h6>
-
-                <p class="text-muted">
-                    @(string.IsNullOrWhiteSpace(Model.Info)
-                        ? "No additional information."
-                        : Model.Info)
+            <!-- Info & Description -->
+            <div class="mb-4">
+                <h6 class="font-weight-bold text-primary">
+                    <i class="fas fa-info-circle mr-1"></i> Short Info
+                </h6>
+                <p class="text-gray-700 bg-light p-3 rounded border mb-0 product-text-box">
+                    @(string.IsNullOrWhiteSpace(Model.Info) ? "No additional info available." : Model.Info)
                 </p>
             </div>
 
-            <!-- Description -->
-            <div class="mb-4">
-                <h6 class="font-weight-bold text-primary">Description</h6>
-
-                <p class="text-muted">
-                    @(string.IsNullOrWhiteSpace(Model.Description)
-                        ? "No description."
-                        : Model.Description)
+            <div class="mb-2">
+                <h6 class="font-weight-bold text-primary">
+                    <i class="fas fa-align-left mr-1"></i> Description
+                </h6>
+                <p class="text-gray-700 bg-light p-3 rounded border mb-0 product-text-box">
+                    @(string.IsNullOrWhiteSpace(Model.Description) ? "No description available for this product." : Model.Description)
                 </p>
             </div>
 

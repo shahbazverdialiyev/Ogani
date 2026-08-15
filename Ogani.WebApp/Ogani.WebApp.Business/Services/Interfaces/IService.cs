@@ -16,7 +16,7 @@ namespace Ogani.WebApp.Business.Services.Interfaces
         Task<IReadOnlyCollection<TRead>> GetAllAsync();
         Task<TDetailRead> GetByIdAsync(int id);
         Task<TUpdate> GetForUpdateAsync(int id);
-        Task AddAsync(TCreate entity);
+        Task<int> AddAsync(TCreate entity);
         Task UpdateAsync(TUpdate entity);
         Task DeleteAsync(int id);
     }

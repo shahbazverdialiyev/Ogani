@@ -24,7 +24,7 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
             _context = context;
         }
 
-        public async Task<TEntity?> GetByIdAsync(TKey id, bool tracking = false)
+        public virtual async Task<TEntity?> GetByIdAsync(TKey id, bool tracking = false)
         {
             return tracking
                  ? await Table.FindAsync(id)

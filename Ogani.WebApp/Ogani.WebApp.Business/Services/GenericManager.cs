@@ -36,7 +36,7 @@ namespace Ogani.WebApp.Business.Services
             _updateValidator = updateValidator;
         }
 
-        public async Task<TDetailRead> GetByIdAsync(int id)
+        public virtual async Task<TDetailRead> GetByIdAsync(int id)
         {
             TEntity? entity = await _uoW.GetRepository<TEntity, int>().GetByIdAsync(id)
                 ?? throw new NotFoundException(typeof(TEntity).Name, id);
@@ -60,7 +60,7 @@ namespace Ogani.WebApp.Business.Services
             return _mapper.Map<TUpdate>(entity);
         }
 
-        public virtual async Task AddAsync(TCreate dto)
+        public virtual async Task<int> AddAsync(TCreate dto)
         {
             ValidationResult validationResult = await _createValidator.ValidateAsync(dto);
 
@@ -71,6 +71,8 @@ namespace Ogani.WebApp.Business.Services
 
             await _uoW.GetRepository<TEntity, int>().AddAsync(entity);
             await _uoW.SaveChangesAsync();
+
+            return entity.Id;
         }
 
         public virtual async Task UpdateAsync(TUpdate updatedEntity)

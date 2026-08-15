@@ -19,7 +19,14 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index() => View(await _productService.GetAllAsync());
+        public async Task<IActionResult> Index(int? categoryId)
+        {
+            var products = categoryId.HasValue
+                ? await _productService.GetProductsByCategoryIdAsync(categoryId.Value)
+                : await _productService.GetAllAsync();
+
+            return View(products);
+        }
 
         [HttpGet]
         public async Task<IActionResult> Detail(int id)
@@ -28,11 +35,12 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
             {
                 return View(await _productService.GetByIdAsync(id));
             }
-            catch(NotFoundException ex)
+            catch (NotFoundException ex)
             {
-                TempData["NotifyError"]=ex.Message;
-                return RedirectToAction(nameof(Index));
+                TempData["NotifyError"] = ex.Message;
             }
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
@@ -48,22 +56,22 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
 
             try
             {
-                await _productService.AddAsync(product);
+                int productId = await _productService.AddAsync(product);
                 TempData["NotifySuccess"] = "Created new Product";
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Detail), new { id=productId});
             }
             catch (BusinessValidationException ex)
             {
                 foreach (var error in ex.Errors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
             }
-            catch(BusinessException ex)
+            catch (BusinessException ex)
             {
                 ModelState.AddModelError("", ex.Message);
             }
 
-            return View();
+            return View(product);
         }
 
         [HttpGet]
@@ -78,9 +86,9 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
             catch (NotFoundException ex)
             {
                 TempData["NotifyError"] = ex.Message;
-
-                return RedirectToAction(nameof(Index));
             }
+
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
@@ -123,15 +131,14 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
             {
                 await _productService.DeleteAsync(id);
                 TempData["NotifySuccess"] = "Deleted Product";
-
-                return RedirectToAction(nameof(Index));
             }
             catch (NotFoundException ex)
             {
                 TempData["NotifyError"] = ex.Message;
 
-                return RedirectToAction(nameof(Index));
             }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

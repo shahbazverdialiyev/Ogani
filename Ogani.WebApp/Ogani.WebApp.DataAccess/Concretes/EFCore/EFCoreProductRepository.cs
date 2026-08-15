@@ -15,6 +15,17 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
     {
         public EFCoreProductRepository(OganiDbContext context) : base(context) { }
 
+        public override async Task<Product?> GetByIdAsync(int id, bool tracking = false)
+        {
+            IQueryable<Product> query = Table.Include(p => p.Category)
+                                             .Include(p => p.Discounts);
+
+            return tracking
+                 ? await query.FirstOrDefaultAsync(p => p.Id.Equals(id))
+                 : await query.AsNoTracking()
+                              .FirstOrDefaultAsync(p => p.Id.Equals(id));
+        }
+
         public override async Task<List<Product>> GetAllAsync(bool tracking = false)
         {
             IQueryable<Product> query = Table.Include(p => p.Category);
@@ -47,7 +58,7 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
 
         public async Task<List<Product>> GetProductsByCategoryIdAsync(int categoryId, bool tracking = false)
         {
-            IQueryable<Product> query = Table.Where(p => p.CategoryId == categoryId);
+            IQueryable<Product> query = Table.Where(p => p.CategoryId == categoryId).Include(p=>p.Category);
 
             return tracking
                 ? await query.ToListAsync()

@@ -1,0 +1,15 @@
+﻿.product-detail-img {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+}
+
+.product-detail-price {
+    font-size: 1.1rem;
+}
+
+.product-text-box {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    word-break: break-word;
+}
