@@ -8,6 +8,6 @@ namespace Ogani.WebApp.DTOs.DiscountDTO
 {
     public class DiscountDetailReadDTO : DiscountReadDTO
     {
-        public IReadOnlyCollection<string> ProductNames { get; init; } = [];
+        public DateTime CreatedDate { get; init; }
     }
 }

@@ -15,13 +15,15 @@ namespace Ogani.WebApp.Business.Mappings.AutoMapper
         {
             CreateMap<Discount, DiscountReadDTO>();
 
-            CreateMap<Discount, DiscountDetailReadDTO>()
-                .ForMember(dest => dest.ProductNames, opt => opt.MapFrom(src => src.Products.Select(x => x.Name)));
+            CreateMap<Discount, DiscountDetailReadDTO>();
 
             CreateMap<DiscountCreateDTO, Discount>()
             .ForMember(dest => dest.Products, opt => opt.Ignore());
 
+            CreateMap<Discount, DiscountUpdateDTO>();
+
             CreateMap<DiscountUpdateDTO, Discount>()
+                .ForMember(dest => dest.Code, p => p.Ignore())
                 .ForMember(dest => dest.Products, opt => opt.Ignore());
         }
     }

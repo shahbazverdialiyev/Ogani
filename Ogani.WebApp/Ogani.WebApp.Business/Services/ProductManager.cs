@@ -135,6 +135,13 @@ namespace Ogani.WebApp.Business.Services
             return _mapper.Map<IReadOnlyCollection<ProductReadDTO>>(products);
         }
 
+        public async Task<IReadOnlyCollection<ProductReadDTO>> GetProductsByDiscountIdAsync(int discountId)
+        {
+            IReadOnlyCollection<Product> products = await _uoW.ProductRepository.GetProductsByDiscountIdAsync(discountId);
+             
+            return _mapper.Map<IReadOnlyCollection<ProductReadDTO>>(products);
+        }
+
         private async Task ValidateCategoryIdAsync(int? categoryId)
         {
             if (!categoryId.HasValue)

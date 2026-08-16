@@ -58,7 +58,17 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
 
         public async Task<List<Product>> GetProductsByCategoryIdAsync(int categoryId, bool tracking = false)
         {
-            IQueryable<Product> query = Table.Where(p => p.CategoryId == categoryId).Include(p=>p.Category);
+            IQueryable<Product> query = Table.Where(p => p.CategoryId == categoryId).Include(p => p.Category);
+
+            return tracking
+                ? await query.ToListAsync()
+                : await query.AsNoTracking()
+                             .ToListAsync();
+        }
+
+        public async Task<List<Product>> GetProductsByDiscountIdAsync(int discountId, bool tracking = false)
+        {
+            IQueryable<Product> query = Table.Where(p => p.Discounts.Any(d => d.Id == discountId));
 
             return tracking
                 ? await query.ToListAsync()

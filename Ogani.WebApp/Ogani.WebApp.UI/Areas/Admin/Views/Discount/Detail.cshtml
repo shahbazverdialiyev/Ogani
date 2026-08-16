@@ -1,0 +1,202 @@
+﻿@using Ogani.WebApp.DTOs.DiscountDTO
+@model DiscountDetailReadDTO
+
+@{
+    var now = DateTime.Now;
+    bool isActive = now >= Model.StartDate && now <= Model.EndDate;
+    bool isUpcoming = now < Model.StartDate;
+    bool isExpired = now > Model.EndDate;
+
+    // Status üçün rəng, ikon və mətn təyini
+    string statusBadgeBg = isActive ? "bg-success" : (isUpcoming ? "bg-info" : "bg-danger");
+    string statusText = isActive ? "Active" : (isUpcoming ? "Upcoming" : "Expired");
+    string statusDesc = isActive ? "Coupon is active and ready to use"
+                      : (isUpcoming ? "Scheduled for future release"
+                      : "Campaign period has ended");
+    string statusIcon = isActive ? "fa-check-circle" : (isUpcoming ? "fa-clock" : "fa-times-circle");
+
+    // Campaign Progress Hesablanması
+    double progressPercent = 0;
+    TimeSpan remainingTime = TimeSpan.Zero;
+
+    if (isActive)
+    {
+        var total = (Model.EndDate - Model.StartDate).TotalSeconds;
+        var elapsed = (now - Model.StartDate).TotalSeconds;
+        progressPercent = Math.Min(100, Math.Max(0, (elapsed / (total > 0 ? total : 1)) * 100));
+        remainingTime = Model.EndDate - now;
+    }
+    else if (isExpired)
+    {
+        progressPercent = 100;
+    }
+}
+
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="h3 mb-1 text-gray-800">Discount Overview</h1>
+            <p class="text-muted small mb-0">Detailed status and validity metrics for code <strong>#@Model.Code</strong></p>
+        </div>
+        <div class="d-flex align-items-center">
+            <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-3 mr-2 shadow-sm">
+                <i class="fas fa-arrow-left mr-1"></i> Back
+            </a>
+            <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-warning rounded-pill px-4 shadow-sm">
+                <i class="fas fa-edit mr-1"></i> Edit
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Metrics Row -->
+    <div class="row mb-4">
+        <!-- Coupon Code Card -->
+        <div class="col-xl-4 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm rounded-lg h-100 bg-white">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-xs font-weight-bold text-uppercase text-muted mb-1">Coupon Code</div>
+                        <div class="h3 mb-0 font-weight-bold text-dark text-uppercase tracking-wider">
+                            @Model.Code
+                        </div>
+                    </div>
+                    <div class="bg-light p-3 rounded-circle text-primary">
+                        <i class="fas fa-ticket-alt fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Discount Rate Card -->
+        <div class="col-xl-4 col-md-6 mb-3">
+            <div class="card border-0 shadow-sm rounded-lg h-100 bg-white">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-xs font-weight-bold text-uppercase text-muted mb-1">Discount Rate</div>
+                        <div class="h3 mb-0 font-weight-bold text-success">
+                            %@Model.DiscountPercentage.ToString("G29") <span class="h6 font-weight-normal text-muted">OFF</span>
+                        </div>
+                    </div>
+                    <div class="bg-success-light p-3 rounded-circle text-success" style="background-color: #e8f5e9;">
+                        <i class="fas fa-percent fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Card (Highlight) -->
+        <div class="col-xl-4 col-md-12 mb-3">
+            <div class="card border-0 shadow-sm rounded-lg h-100 bg-white">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div>
+                        <div class="text-xs font-weight-bold text-uppercase text-muted mb-1">Lifecycle Status</div>
+                        <div class="d-flex align-items-center">
+                            <span class="badge @statusBadgeBg text-white px-3 py-1 font-weight-bold mr-2">
+                                <i class="fas @statusIcon mr-1"></i> @statusText
+                            </span>
+                        </div>
+                        <small class="text-muted d-block mt-1">@statusDesc</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Grid -->
+    <div class="row">
+        <!-- Campaign Timeline -->
+        <div class="col-lg-8 mb-4">
+            <div class="card border-0 shadow-sm rounded-lg">
+                <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-dark">
+                        <i class="fas fa-calendar-alt text-primary mr-2"></i>Campaign Timeline
+                    </h6>
+                    @if (isActive)
+                    {
+                        <span class="small font-weight-bold text-success">
+                            <i class="fas fa-hourglass-half mr-1"></i> @remainingTime.Days d @remainingTime.Hours h left
+                        </span>
+                    }
+                </div>
+                <div class="card-body">
+
+                    <!-- Progress Bar -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small font-weight-bold text-muted">Time Elapsed</span>
+                            <span class="small font-weight-bold text-dark">@Math.Round(progressPercent)%</span>
+                        </div>
+                        <div class="progress rounded-pill" style="height: 8px;">
+                            <div class="progress-bar @statusBadgeBg progress-bar-striped progress-bar-animated"
+                                 role="progressbar"
+                                 style="width: @progressPercent.ToString("F0")%">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Start & End Dates Table -->
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <tbody>
+                                <tr>
+                                    <td class="py-3 border-0 text-muted" style="width: 180px;">
+                                        <i class="fas fa-play-circle text-success mr-2"></i><strong>Start Date</strong>
+                                    </td>
+                                    <td class="py-3 border-0 font-weight-bold text-dark">
+                                        @Model.StartDate.ToString("dd MMMM yyyy - HH:mm")
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 border-0 text-muted">
+                                        <i class="fas fa-stop-circle text-danger mr-2"></i><strong>End Date</strong>
+                                    </td>
+                                    <td class="py-3 border-0 font-weight-bold text-dark">
+                                        @Model.EndDate.ToString("dd MMMM yyyy - HH:mm")
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Created Date & System Audit Info -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-lg bg-white h-100">
+                <div class="card-header bg-white py-3 border-0">
+                    <h6 class="m-0 font-weight-bold text-dark">
+                        <i class="fas fa-history text-info mr-2"></i>Audit Information
+                    </h6>
+                </div>
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div class="p-3 bg-light rounded-lg mb-3">
+                        <div class="text-xs font-weight-bold text-uppercase text-muted mb-1">Created Date</div>
+                        <div class="h6 mb-0 font-weight-bold text-dark">
+                            <i class="far fa-clock text-info mr-2"></i>@Model.CreatedDate.ToString("dd MMMM yyyy")
+                        </div>
+                        <small class="text-muted">At @Model.CreatedDate.ToString("HH:mm:ss")</small>
+                    </div>
+
+                    <div class="border-top pt-3">
+                        <div class="text-xs font-weight-bold text-uppercase text-muted mb-2">Usage Notes</div>
+                        <ul class="list-unstyled small text-muted mb-0">
+                            <li class="mb-2"><i class="fas fa-check-circle text-success mr-2"></i>Valid across all applicable products.</li>
+                            <li class="mb-2"><i class="fas fa-check-circle text-success mr-2"></i>Discount is non-stackable.</li>
+                            <li><i class="fas fa-info-circle text-info mr-2"></i>Created records are immutable.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ViewComponent Invoke (Endirimə aid olan məhsulların siyahısı) -->
+    <div class="row">
+        <div class="col-12 mb-4">
+            @await Component.InvokeAsync("DiscountProducts", new { discountId = Model.Id })
+        </div>
+    </div>
+</div>

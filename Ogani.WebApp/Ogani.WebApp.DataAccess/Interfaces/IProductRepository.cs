@@ -15,6 +15,8 @@ namespace Ogani.WebApp.DataAccess.Interfaces
 
         Task<List<Product>> GetProductsByCategoryIdAsync(int categoryId, bool tracking = false);
 
+        Task<List<Product>> GetProductsByDiscountIdAsync(int categoryId, bool tracking = false);
+
         Task<List<Product>> GetProductsWithCategoryAsync();
 
         Task<Product?> GetProductDetailsAsync(int id);

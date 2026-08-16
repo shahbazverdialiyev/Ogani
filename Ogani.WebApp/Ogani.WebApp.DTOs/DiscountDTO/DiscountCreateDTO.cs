@@ -12,7 +12,5 @@ namespace Ogani.WebApp.DTOs.DiscountDTO
         public decimal DiscountPercentage { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-
-        public ICollection<int> ProductIds { get; set; } = [];
     }
 }

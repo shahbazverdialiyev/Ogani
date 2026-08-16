@@ -61,7 +61,7 @@
                 @foreach (CategoryReadDTO item in Model)
                 {
                     <!-- Kart üzərinə basdıqda Detail-ə keçir -->
-                    <div class="card shadow-sm mb-3 border-left-primary category-item-card position-relative"
+                    <div class="card shadow-sm mb-3 border-left-primary interactive-item position-relative"
                          onclick="window.location.href='@Url.Action("Detail", new { id = item.Id })'">
 
                         <div class="card-body p-3">

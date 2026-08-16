@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using Microsoft.Identity.Client;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DataAccess.UnitOfWork;
 using Ogani.WebApp.DTOs.DiscountDTO;
@@ -14,8 +15,7 @@ namespace Ogani.WebApp.Business.Services
 {
     public class DiscountManager : GenericManager<Discount, DiscountReadDTO, DiscountDetailReadDTO, DiscountCreateDTO, DiscountUpdateDTO>, IDiscountService
     {
-        public DiscountManager(IUoW uoW, IMapper mapper, IValidator<DiscountCreateDTO> createValidator, IValidator<DiscountUpdateDTO> updateValidator) : base(uoW, mapper, createValidator, updateValidator)
-        {
-        }
+        public DiscountManager(IUoW uoW, IMapper mapper, IValidator<DiscountCreateDTO> createValidator, IValidator<DiscountUpdateDTO> updateValidator)
+            : base(uoW, mapper, createValidator, updateValidator) { }
     }
 }

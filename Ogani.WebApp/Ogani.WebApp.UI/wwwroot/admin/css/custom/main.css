@@ -52,3 +52,14 @@ table td, table th {
     border-radius: 12px;
     font-weight: 600;
 }
+
+/* Generic Clickable Hover Card/Row Effect */
+.interactive-item {
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+    .interactive-item:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.12) !important;
+    }
