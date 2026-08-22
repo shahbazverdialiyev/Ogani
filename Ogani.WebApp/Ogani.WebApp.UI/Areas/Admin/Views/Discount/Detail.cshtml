@@ -7,7 +7,6 @@
     bool isUpcoming = now < Model.StartDate;
     bool isExpired = now > Model.EndDate;
 
-    // Status üçün rəng, ikon və mətn təyini
     string statusBadgeBg = isActive ? "bg-success" : (isUpcoming ? "bg-info" : "bg-danger");
     string statusText = isActive ? "Active" : (isUpcoming ? "Upcoming" : "Expired");
     string statusDesc = isActive ? "Coupon is active and ready to use"
@@ -15,7 +14,6 @@
                       : "Campaign period has ended");
     string statusIcon = isActive ? "fa-check-circle" : (isUpcoming ? "fa-clock" : "fa-times-circle");
 
-    // Campaign Progress Hesablanması
     double progressPercent = 0;
     TimeSpan remainingTime = TimeSpan.Zero;
 
@@ -33,7 +31,6 @@
 }
 
 <div class="container-fluid">
-    <!-- Header Section -->
     <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
             <h1 class="h3 mb-1 text-gray-800">Discount Overview</h1>
@@ -49,9 +46,7 @@
         </div>
     </div>
 
-    <!-- Main Metrics Row -->
     <div class="row mb-4">
-        <!-- Coupon Code Card -->
         <div class="col-xl-4 col-md-6 mb-3">
             <div class="card border-0 shadow-sm rounded-lg h-100 bg-white">
                 <div class="card-body d-flex align-items-center justify-content-between">
@@ -68,7 +63,6 @@
             </div>
         </div>
 
-        <!-- Discount Rate Card -->
         <div class="col-xl-4 col-md-6 mb-3">
             <div class="card border-0 shadow-sm rounded-lg h-100 bg-white">
                 <div class="card-body d-flex align-items-center justify-content-between">
@@ -85,7 +79,6 @@
             </div>
         </div>
 
-        <!-- Status Card (Highlight) -->
         <div class="col-xl-4 col-md-12 mb-3">
             <div class="card border-0 shadow-sm rounded-lg h-100 bg-white">
                 <div class="card-body d-flex align-items-center justify-content-between">
@@ -103,9 +96,7 @@
         </div>
     </div>
 
-    <!-- Details Grid -->
     <div class="row">
-        <!-- Campaign Timeline -->
         <div class="col-lg-8 mb-4">
             <div class="card border-0 shadow-sm rounded-lg">
                 <div class="card-header bg-white py-3 border-0 d-flex align-items-center justify-content-between">
@@ -121,7 +112,6 @@
                 </div>
                 <div class="card-body">
 
-                    <!-- Progress Bar -->
                     <div class="mb-4">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span class="small font-weight-bold text-muted">Time Elapsed</span>
@@ -135,7 +125,6 @@
                         </div>
                     </div>
 
-                    <!-- Start & End Dates Table -->
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0">
                             <tbody>
@@ -163,7 +152,6 @@
             </div>
         </div>
 
-        <!-- Created Date & System Audit Info -->
         <div class="col-lg-4 mb-4">
             <div class="card border-0 shadow-sm rounded-lg bg-white h-100">
                 <div class="card-header bg-white py-3 border-0">
@@ -193,7 +181,6 @@
         </div>
     </div>
 
-    <!-- ViewComponent Invoke (Endirimə aid olan məhsulların siyahısı) -->
     <div class="row">
         <div class="col-12 mb-4">
             @await Component.InvokeAsync("DiscountProducts", new { discountId = Model.Id })

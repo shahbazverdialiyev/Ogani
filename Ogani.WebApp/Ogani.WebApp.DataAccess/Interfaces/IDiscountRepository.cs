@@ -14,5 +14,7 @@ namespace Ogani.WebApp.DataAccess.Interfaces
         Task<List<Discount>> GetExpiredDiscountsAsync();
 
         Task<List<Discount>> GetUpcomingDiscountsAsync();
+
+        Task<Discount?> GetByIdWithProductsAsync(int id, bool tracking = false);
     }
 }

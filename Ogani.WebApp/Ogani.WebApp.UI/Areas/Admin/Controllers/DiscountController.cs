@@ -93,14 +93,14 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
                 foreach (var error in ex.Errors)
                     ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
             }
-            catch(NotFoundException ex)
+            catch (NotFoundException ex)
             {
-                TempData["NotifyError"]=ex.Message;
-                RedirectToAction((nameof(Index)));
+                TempData["NotifyError"] = ex.Message;
+                return RedirectToAction((nameof(Index)));
             }
-            catch(BusinessException ex)
+            catch (BusinessException ex)
             {
-                ModelState.AddModelError("",ex.Message);
+                ModelState.AddModelError("", ex.Message);
             }
 
             return View(dto);
@@ -114,12 +114,50 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
                 await _discountService.DeleteAsync(id);
                 TempData["NotifySuccess"] = "Successfully deleted";
             }
-            catch(NotFoundException ex)
+            catch (NotFoundException ex)
             {
                 TempData["NotifyError"] = ex.Message;
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageProducts(int discountId)
+        {
+            try
+            {
+                DiscountProductsDTO dto = await _discountService.GetProductsForManageAsync(discountId);
+
+                return View(dto);
+            }
+            catch (NotFoundException ex)
+            {
+                TempData["NotifyError"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ManageProducts(DiscountProductsDTO dto)
+        {
+            try
+            {
+                await _discountService.UpdateProductsAsync(dto.DiscountId, dto.SelectedProductIds);
+                TempData["NotifySuccess"] = "Discount products updated successfully.";
+            }
+            catch (NotFoundException ex)
+            {
+                TempData["NotifyError"] = ex.Message;
+                return RedirectToAction(nameof(Index));
+            }
+            catch (BusinessException ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+            }
+
+            return RedirectToAction(nameof(Detail), new { id = dto.DiscountId });
         }
     }
 }

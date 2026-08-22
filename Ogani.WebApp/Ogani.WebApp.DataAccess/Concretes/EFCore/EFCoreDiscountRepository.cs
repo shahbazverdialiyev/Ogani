@@ -40,5 +40,16 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
                               .AsNoTracking()
                               .ToListAsync();
         }
+
+        public async Task<Discount?> GetByIdWithProductsAsync(int id, bool tracking = false)
+        {
+            IQueryable<Discount> query = Table
+                .Include(x => x.Products)
+                .Where(x => x.Id == id);
+
+            return tracking
+                ? await query.FirstOrDefaultAsync()
+                : await query.AsNoTracking().FirstOrDefaultAsync();
+        }
     }
 }
