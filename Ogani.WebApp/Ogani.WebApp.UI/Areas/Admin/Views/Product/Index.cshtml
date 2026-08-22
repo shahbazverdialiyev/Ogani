@@ -19,28 +19,6 @@
     <div class="card shadow mb-4 border-0 rounded-lg">
         <div class="card-header py-3 d-flex justify-content-between align-items-center bg-white border-bottom-0">
             <h6 class="m-0 font-weight-bold text-primary">Products List</h6>
-
-            <div>
-                @if (TempData["NotifySuccess"] != null)
-                {
-                    <div class="alert alert-success alert-dismissible fade show mb-0 py-2" role="alert">
-                        <i class="fas fa-check-circle mr-2"></i> @TempData["NotifySuccess"]
-                        <button type="button" class="close py-2" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                }
-
-                @if (TempData["NotifyError"] != null)
-                {
-                    <div class="alert alert-danger alert-dismissible fade show mb-0 py-2" role="alert">
-                        <i class="fas fa-exclamation-triangle mr-2"></i> @TempData["NotifyError"]
-                        <button type="button" class="close py-2" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                }
-            </div>
         </div>
 
         <div class="card-body p-0">
@@ -75,7 +53,6 @@
                             @foreach (ProductReadDTO item in Model)
                             {
                                 <tr>
-                                    <!-- 1. Image -->
                                     <td>
                                         <a asp-action="Detail" asp-route-id="@item.Id">
                                             @if (!string.IsNullOrEmpty(item.ImageUrl))
@@ -91,14 +68,12 @@
                                         </a>
                                     </td>
 
-                                    <!-- 2. Product Name (Tıkladıqda Product Detail-ə gedir) -->
                                     <td class="text-left font-weight-bold">
                                         <a asp-action="Detail" asp-route-id="@item.Id" class="text-dark hover-link text-decoration-none">
                                             @item.Name
                                         </a>
                                     </td>
 
-                                    <!-- 3. Category Name (Tıkladıqda Category Detail-ə gedir) -->
                                     <td class="text-left">
                                         @if (item.CategoryId != null && item.CategoryId > 0)
                                         {
@@ -108,13 +83,12 @@
                                         }
                                         else
                                         {
-                                            <span class="badge badge-light text-secondary border px-2 py-1">
-                                                <i class="fas fa-folder mr-1 text-muted"></i>@(item.CategoryName ?? "-")
+                                            <span class="badge badge-light text-secondary text-muted border px-2 py-1">
+                                                @(item.CategoryName ?? "none")
                                             </span>
                                         }
                                     </td>
 
-                                    <!-- 4. Quantity Status -->
                                     <td>
                                         @if (item.Quantity <= 5)
                                         {
@@ -128,12 +102,10 @@
                                         }
                                     </td>
 
-                                    <!-- 5. Price -->
                                     <td class="font-weight-bold text-success">
                                         $@item.Price.ToString("F2")
                                     </td>
 
-                                    <!-- 6. Availability -->
                                     <td>
                                         @if (item.IsAvailable)
                                         {
@@ -145,7 +117,6 @@
                                         }
                                     </td>
 
-                                    <!-- 7. Featured Star -->
                                     <td>
                                         @if (item.IsFeatured)
                                         {
@@ -157,12 +128,10 @@
                                         }
                                     </td>
 
-                                    <!-- 8. Created Date -->
                                     <td class="text-muted small">
                                         @item.CreatedDate.ToString("dd MMM yyyy")
                                     </td>
 
-                                    <!-- 9. Status -->
                                     <td>
                                         @if (item.Status)
                                         {
@@ -174,7 +143,6 @@
                                         }
                                     </td>
 
-                                    <!-- 10. Actions -->
                                     <td>
                                         <div class="d-flex justify-content-center align-items-center">
                                             <a asp-action="Detail" asp-route-id="@item.Id" class="btn btn-sm btn-light text-info mr-1 rounded-circle action-btn" title="Details">

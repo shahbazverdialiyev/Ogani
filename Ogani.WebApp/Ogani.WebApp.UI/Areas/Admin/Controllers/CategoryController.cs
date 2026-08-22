@@ -2,6 +2,7 @@
 using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DTOs.CategoryDTO;
+using Ogani.WebApp.Entities;
 
 namespace Ogani.WebApp.UI.Areas.Admin.Controllers
 {
@@ -37,15 +38,15 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         public IActionResult Create() => View();
 
         [HttpPost]
-        public async Task<IActionResult> Create(CategoryCreateDTO dto)
+        public async Task<IActionResult> Create(CategoryCreateDTO categoryDto)
         {
             if (!ModelState.IsValid)
-                return View(dto);
+                return View(categoryDto);
 
             try
             {
-                await _categoryService.AddAsync(dto);
-                TempData["NotifySuccess"] = "Created new category";
+                await _categoryService.AddAsync(categoryDto);
+                TempData["NotifySuccess"] = $"Product \"{categoryDto.Name}\" was created successfully.";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -59,7 +60,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            return View(dto);
+            return View(categoryDto);
         }
 
         [HttpGet]
@@ -67,8 +68,8 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         {
             try
             {
-                CategoryUpdateDTO dto = await _categoryService.GetForUpdateAsync(id);
-                return View(dto);
+                CategoryUpdateDTO categoryDto = await _categoryService.GetForUpdateAsync(id);
+                return View(categoryDto);
             }
             catch (NotFoundException ex)
             {
@@ -79,15 +80,15 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(CategoryUpdateDTO dto)
+        public async Task<IActionResult> Update(CategoryUpdateDTO categoryDto)
         {
             if (!ModelState.IsValid)
-                return View(dto);
+                return View(categoryDto);
 
             try
             {
-                await _categoryService.UpdateAsync(dto);
-                TempData["NotifySuccess"] = "Updated Category";
+                await _categoryService.UpdateAsync(categoryDto);
+                TempData["NotifySuccess"] = $"Category \"{categoryDto.Name}\" was updated successfully.";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -108,7 +109,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
                 ModelState.AddModelError("", ex.Message);
             }
 
-            return View(dto);
+            return View(categoryDto);
         }
 
         [HttpPost]
@@ -117,7 +118,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
             try
             {
                 await _categoryService.DeleteAsync(id);
-                TempData["NotifySuccess"] = "Successfully deleted";
+                TempData["NotifySuccess"] = "Category deleted successfully.";
             }
             catch (NotFoundException ex)
             {

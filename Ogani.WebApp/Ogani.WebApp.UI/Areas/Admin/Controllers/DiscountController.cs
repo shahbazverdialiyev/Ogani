@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Mvc;
 using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DTOs.DiscountDTO;
@@ -37,14 +38,14 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         public IActionResult Create() => View();
 
         [HttpPost]
-        public async Task<IActionResult> Create(DiscountCreateDTO dto)
+        public async Task<IActionResult> Create(DiscountCreateDTO dicountDto)
         {
             if (!ModelState.IsValid)
-                return View(dto);
+                return View(dicountDto);
 
             try
             {
-                await _discountService.AddAsync(dto);
+                await _discountService.AddAsync(dicountDto);
                 TempData["NotifySuccess"] = "Created new discount";
                 return RedirectToAction(nameof(Index));
             }
@@ -58,7 +59,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
                 ModelState.AddModelError("", ex.Message);
             }
 
-            return View(dto);
+            return View(dicountDto);
         }
 
         [HttpGet]
@@ -66,8 +67,8 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         {
             try
             {
-                DiscountUpdateDTO dto = await _discountService.GetForUpdateAsync(id);
-                return View(dto);
+                DiscountUpdateDTO discountDto = await _discountService.GetForUpdateAsync(id);
+                return View(discountDto);
             }
             catch (NotFoundException ex)
             {
@@ -78,15 +79,15 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(DiscountUpdateDTO dto)
+        public async Task<IActionResult> Update(DiscountUpdateDTO discountDto)
         {
             if (!ModelState.IsValid)
-                return View(dto);
+                return View(discountDto);
 
             try
             {
-                await _discountService.UpdateAsync(dto);
-                TempData["NotifySuccess"] = "Updated discount";
+                await _discountService.UpdateAsync(discountDto);
+                TempData["NotifySuccess"] = $"Discount \"{discountDto.Code}\" was updated successfully.";
             }
             catch (BusinessValidationException ex)
             {
@@ -103,7 +104,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
                 ModelState.AddModelError("", ex.Message);
             }
 
-            return View(dto);
+            return View(discountDto);
         }
 
         [HttpPost]
@@ -112,7 +113,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
             try
             {
                 await _discountService.DeleteAsync(id);
-                TempData["NotifySuccess"] = "Successfully deleted";
+                TempData["NotifySuccess"] = "Discount deleted successfully.";
             }
             catch (NotFoundException ex)
             {
@@ -127,9 +128,9 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         {
             try
             {
-                DiscountProductsDTO dto = await _discountService.GetProductsForManageAsync(discountId);
+                DiscountProductsDTO discountDto = await _discountService.GetProductsForManageAsync(discountId);
 
-                return View(dto);
+                return View(discountDto);
             }
             catch (NotFoundException ex)
             {
@@ -140,11 +141,11 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ManageProducts(DiscountProductsDTO dto)
+        public async Task<IActionResult> ManageProducts(DiscountProductsDTO discountDto)
         {
             try
             {
-                await _discountService.UpdateProductsAsync(dto.DiscountId, dto.SelectedProductIds);
+                await _discountService.UpdateProductsAsync(discountDto.DiscountId, discountDto.SelectedProductIds);
                 TempData["NotifySuccess"] = "Discount products updated successfully.";
             }
             catch (NotFoundException ex)
@@ -157,7 +158,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
                 ModelState.AddModelError(string.Empty, ex.Message);
             }
 
-            return RedirectToAction(nameof(Detail), new { id = dto.DiscountId });
+            return RedirectToAction(nameof(Detail), new { id = discountDto.DiscountId });
         }
     }
 }

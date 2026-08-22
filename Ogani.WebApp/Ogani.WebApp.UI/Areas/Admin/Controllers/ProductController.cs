@@ -47,19 +47,19 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         public IActionResult Create() => View(new ProductCreateDTO());
 
         [HttpPost]
-        public async Task<IActionResult> Create(ProductCreateDTO product)
+        public async Task<IActionResult> Create(ProductCreateDTO productDto)
         {
             if (!ModelState.IsValid)
             {
-                return View(product);
+                return View(productDto);
             }
 
             try
             {
-                int productId = await _productService.AddAsync(product);
-                TempData["NotifySuccess"] = "Created new product";
+                int productId = await _productService.AddAsync(productDto);
+                TempData["NotifySuccess"] = $"Product \"{productDto.Name}\" was created successfully.";
 
-                return RedirectToAction(nameof(Detail), new { id=productId});
+                return RedirectToAction(nameof(Detail), new { id = productId });
             }
             catch (BusinessValidationException ex)
             {
@@ -71,7 +71,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
                 ModelState.AddModelError("", ex.Message);
             }
 
-            return View(product);
+            return View(productDto);
         }
 
         [HttpGet]
@@ -100,9 +100,9 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
             try
             {
                 await _productService.UpdateAsync(updateDto);
-                TempData["NotifySuccess"] = "Updated Product";
+                TempData["NotifySuccess"] = $"Product \"{updateDto.Name}\" was updated successfully.";
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Detail), new { id = updateDto.Id });
             }
             catch (BusinessValidationException ex)
             {
@@ -130,7 +130,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
             try
             {
                 await _productService.DeleteAsync(id);
-                TempData["NotifySuccess"] = "Successfully deleted";
+                TempData["NotifySuccess"] = "Product deleted successfully.";
             }
             catch (NotFoundException ex)
             {
