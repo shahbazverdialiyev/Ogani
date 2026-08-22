@@ -24,6 +24,12 @@ namespace Ogani.WebApp.DataAccess.Configurations
 
             builder.Property(d => d.DiscountPercentage)
                 .HasPrecision(5, 2);
+
+            builder.Property(d => d.StartDate)
+                .IsRequired();
+
+            builder.Property(d => d.EndDate)
+                .IsRequired();
         }
     }
 }
