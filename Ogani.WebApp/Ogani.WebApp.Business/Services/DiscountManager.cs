@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Identity.Client;
 using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DataAccess.UnitOfWork;
+using Ogani.WebApp.DTOs.CategoryDTO;
 using Ogani.WebApp.DTOs.DiscountDTO;
 using Ogani.WebApp.DTOs.ProductDTO;
 using Ogani.WebApp.Entities;
@@ -19,6 +22,43 @@ namespace Ogani.WebApp.Business.Services
     {
         public DiscountManager(IUoW uoW, IMapper mapper, IValidator<DiscountCreateDTO> createValidator, IValidator<DiscountUpdateDTO> updateValidator)
             : base(uoW, mapper, createValidator, updateValidator) { }
+
+        public override async Task<int> AddAsync(DiscountCreateDTO discountDto)
+        {
+            ValidationResult validationResult = await _createValidator.ValidateAsync(discountDto);
+
+            if (await _uoW.DiscountRepository.AnyAsync(d => d.Code == discountDto.Code))
+                validationResult.Errors.Add(new ValidationFailure(nameof(discountDto.Code), "Discount with this code name already exists."));
+
+            if (!validationResult.IsValid)
+                throw new BusinessValidationException(validationResult.Errors);
+
+            Discount discount = _mapper.Map<Discount>(discountDto);
+
+            await _uoW.GetRepository<Discount, int>().AddAsync(discount);
+            await _uoW.SaveChangesAsync();
+
+            return discount.Id;
+        }
+
+        public override async Task UpdateAsync(DiscountUpdateDTO discountDto)
+        {
+            ValidationResult validationResult = await _updateValidator.ValidateAsync(discountDto);
+
+            if (await _uoW.DiscountRepository.AnyAsync(c => c.Code == discountDto.Code && c.Id != discountDto.Id))
+                validationResult.Errors.Add(new ValidationFailure(nameof(discountDto.Code), "Category with this name already exists."));
+
+            if (!validationResult.IsValid)
+                throw new BusinessValidationException(validationResult.Errors);
+
+            Discount discount = await _uoW.DiscountRepository.GetByIdAsync(discountDto.Id)
+                ?? throw new NotFoundException(nameof(Discount), discountDto.Id);
+
+            _mapper.Map(discountDto, discount);
+
+            _uoW.DiscountRepository.Update(discount);
+            await _uoW.SaveChangesAsync();
+        }
 
         public async Task<DiscountProductsDTO> GetProductsForManageAsync(int discountId)
         {
@@ -46,7 +86,7 @@ namespace Ogani.WebApp.Business.Services
 
             foreach (var product in await GetProductsAsync(ProductIds))
             {
-                    discount.Products.Add(product);
+                discount.Products.Add(product);
             }
 
             await _uoW.SaveChangesAsync();
