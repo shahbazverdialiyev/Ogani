@@ -14,10 +14,13 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
     {
         public EFCoreHeroRepository(OganiDbContext context) : base(context) { }
 
-        public async Task<Hero?> GetActiveHeroAsync()
+        public async Task<Hero?> GetActiveHeroAsync(bool tracking = false)
         {
-            return await Table.AsNoTracking()
-                              .FirstOrDefaultAsync(h => h.IsActive);
+            IQueryable<Hero> query = Table.Where(h => h.IsActive);
+
+            return tracking
+                ? await query.FirstOrDefaultAsync()
+                : await query.AsNoTracking().FirstOrDefaultAsync();
         }
     }
 }

@@ -1,0 +1,20 @@
+﻿@using Ogani.WebApp.DTOs.HeroDTO
+@model HeroDetailReadDTO
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="~/assets/css/style.css" />
+
+@if (Model != null)
+{
+    <div class="hero__item" style="background-image : url(@Model.ImageUrl)">
+        <div class="hero__text">
+            <span>@Model.Subtitle</span>
+            <h2>@Html.Raw(Model.Title?.Replace("\n", "<br />"))</h2>
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <p>@Model.Description</p>
+            }
+            <a href="@Model.ButtonUrl" class="primary-btn">@Model.ButtonText</a>
+        </div>
+    </div>
+}

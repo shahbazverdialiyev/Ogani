@@ -9,6 +9,6 @@ namespace Ogani.WebApp.DataAccess.Interfaces
 {
     public interface IHeroRepository : IRepository<Hero, int>
     {
-        Task<Hero?> GetActiveHeroAsync();
+        Task<Hero?> GetActiveHeroAsync(bool tracking = false);
     }
 }

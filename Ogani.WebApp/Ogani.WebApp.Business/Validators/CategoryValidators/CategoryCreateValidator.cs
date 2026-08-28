@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Ogani.WebApp.Business.Extensions;
 using Ogani.WebApp.DTOs.CategoryDTO;
 using System;
 using System.Collections.Generic;
@@ -10,13 +11,6 @@ namespace Ogani.WebApp.Business.Validators.CategoryValidators
 {
     public class CategoryCreateValidator : AbstractValidator<CategoryCreateDTO>
     {
-        private static readonly string[] AllowedExtensionsForImage =
-        {
-            ".jpg", ".jpeg", ".png", ".webp"
-        };
-        private const int MaxImageSizeInMB = 2;
-        private const long MaxImageSize = MaxImageSizeInMB * 1024 * 1024;
-
         public CategoryCreateValidator()
         {
             RuleFor(x => x.Name)
@@ -27,15 +21,8 @@ namespace Ogani.WebApp.Business.Validators.CategoryValidators
             RuleFor(x => x.Description)
                 .MaximumLength(1000).WithMessage("Description cannot exceed 1000 characters.");
 
-            When(x => x.Image is not null, () =>
-            {
-                RuleFor(x => x.Image!)
-                    .Must(file => AllowedExtensionsForImage.Contains(Path.GetExtension(file.FileName).ToLowerInvariant()))
-                    .WithMessage($"Only the following file types are allowed: {string.Join(", ", AllowedExtensionsForImage)}.")
-
-                    .Must(file => file.Length <= MaxImageSize)
-                    .WithMessage($"Image size must be less than {MaxImageSizeInMB} MB.");
-            });
+            RuleFor(x => x.Image)
+                .ValidateImage();
         }
     }
 }

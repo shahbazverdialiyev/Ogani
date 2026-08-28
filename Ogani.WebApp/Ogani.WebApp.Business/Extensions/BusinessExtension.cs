@@ -27,6 +27,7 @@ namespace Ogani.WebApp.Business.Extensions
             services.AddScoped<IProductService, ProductManager>();
             services.AddScoped<ICategoryService, CategoryManager>();
             services.AddScoped<IDiscountService, DiscountManager>();
+            services.AddScoped<IHeroService, HeroManager>();
             services.AddScoped<IContactService, ContactManager>();
             services.AddScoped<ISocialLinkService, SocialLinkManager>();
 

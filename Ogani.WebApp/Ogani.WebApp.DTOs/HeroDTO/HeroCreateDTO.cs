@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,8 +16,6 @@ namespace Ogani.WebApp.DTOs.HeroDTO
         public string ButtonText { get; set; } = null!;
         public string ButtonUrl { get; set; } = null!;
 
-        public string ImageUrl { get; set; } = null!;
-
-        public bool IsActive { get; set; } = false;
+        public IFormFile Image { get; set; } = null!;
     }
 }

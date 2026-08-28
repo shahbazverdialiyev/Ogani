@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Ogani.WebApp.Business.Extensions;
 using Ogani.WebApp.DTOs.ProductDTO;
 using System;
 using System.Collections.Generic;
@@ -11,13 +12,6 @@ namespace Ogani.WebApp.Business.Validators.ProductValidators
     public abstract class ProductBaseValidator<T> : AbstractValidator<T>
         where T : IProductRequest
     {
-        private static readonly string[] AllowedExtensionsForImage =
-        {
-            ".jpg", ".jpeg", ".png", ".webp"
-        };
-        private const int MaxImageSizeInMB = 2;
-        private const long MaxImageSize = MaxImageSizeInMB * 1024 * 1024;
-
         protected ProductBaseValidator()
         {
             RuleFor(x => x.Name)
@@ -37,15 +31,8 @@ namespace Ogani.WebApp.Business.Validators.ProductValidators
             RuleFor(x => x.Weight)
                 .GreaterThanOrEqualTo(0).WithMessage("Weight must be greater than or equal to 0.");
 
-            When(x => x.Image is not null, () =>
-            {
-                RuleFor(x => x.Image!)
-                    .Must(file => AllowedExtensionsForImage.Contains(Path.GetExtension(file.FileName).ToLowerInvariant()))
-                    .WithMessage($"Only the following file types are allowed: {string.Join(", ", AllowedExtensionsForImage)}.")
-
-                    .Must(file => file.Length <= MaxImageSize)
-                    .WithMessage($"Image size must be less than {MaxImageSizeInMB} MB.");
-            });
+            RuleFor(x => x.Image)
+                .ValidateImage();
 
             RuleFor(x => x.CategoryId)
                 .GreaterThan(0).When(x => x.CategoryId.HasValue).WithMessage("Please select a valid category.");
