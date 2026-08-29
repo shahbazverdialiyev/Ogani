@@ -14,9 +14,12 @@ namespace Ogani.WebApp.Business.Mappings.AutoMapper
         public ContactProfile()
         {
             CreateMap<Contact,ContactReadDTO>();
+            CreateMap<Contact,ContactDetailReadDTO>();
+
             CreateMap<ContactCreateDTO, Contact>();
+
             CreateMap<ContactUpdateDTO, Contact>();
-            CreateMap<ContactReadDTO,ContactUpdateDTO>();
+            CreateMap<Contact,ContactUpdateDTO>();
         }
     }
 }

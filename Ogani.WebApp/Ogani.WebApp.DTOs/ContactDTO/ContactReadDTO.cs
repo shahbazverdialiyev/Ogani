@@ -11,7 +11,6 @@ namespace Ogani.WebApp.DTOs.ContactDTO
     {
         public string Title { get; init; } = null!;
         public string Content { get; init; } = null!;
-
-        public DateTime CreatedDate { get; init; }
+        public string? Icon {  get; init; }
     }
 }

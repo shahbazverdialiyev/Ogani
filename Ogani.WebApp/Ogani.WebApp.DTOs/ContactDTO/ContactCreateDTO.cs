@@ -10,5 +10,6 @@ namespace Ogani.WebApp.DTOs.ContactDTO
     {
         public string Title { get; set; } = null!;
         public string Content { get; set; } = null!;
+        public string? Icon {  get; set; }
     }
 }
