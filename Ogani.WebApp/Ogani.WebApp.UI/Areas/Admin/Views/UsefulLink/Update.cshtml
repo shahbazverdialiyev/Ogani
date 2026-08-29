@@ -1,0 +1,54 @@
+﻿@using Ogani.WebApp.DTOs.UsefulLinkDTO
+@using Ogani.WebApp.Entities.Enums
+@model UsefulLinkUpdateDTO
+
+@{
+    ViewData["Title"] = "Update Useful Link";
+}
+
+<div class="container-fluid pt-4">
+    <div class="card mb-4 col-md-8 mx-auto shadow-sm border-0 rounded-lg">
+        <div class="card-header py-3 bg-white border-bottom-0">
+            <h6 class="m-0 font-weight-bold text-primary">Update Useful Link</h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Update" method="post">
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Name" class="font-weight-bold"></label>
+                    <input asp-for="Name" class="form-control" maxlength="50" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Section" class="font-weight-bold"></label>
+                    <select asp-for="Section" asp-items="Html.GetEnumSelectList<UsefulLinkSection>()" class="form-control"></select>
+                    <span asp-validation-for="Section" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Url" class="font-weight-bold"></label>
+                    <input asp-for="Url" class="form-control" maxlength="1000" />
+                    <span asp-validation-for="Url" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-4">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" asp-for="Status" id="statusSwitch">
+                        <label class="custom-control-label font-weight-bold" for="statusSwitch">Active Status</label>
+                    </div>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+
+                <hr />
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a asp-action="Index" class="btn btn-secondary rounded-pill px-4">Cancel</a>
+                    <button type="submit" class="btn btn-warning rounded-pill px-4 text-white">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

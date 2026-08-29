@@ -1,0 +1,47 @@
+﻿@using Ogani.WebApp.DTOs.UsefulLinkDTO
+@using Ogani.WebApp.Entities.Enums
+@model UsefulLinkCreateDTO
+
+@{
+    ViewData["Title"] = "Create Useful Link";
+}
+
+<div class="container-fluid pt-4">
+    <div class="card mb-4 col-md-8 mx-auto shadow-sm border-0 rounded-lg">
+        <div class="card-header py-3 bg-white border-bottom-0">
+            <h6 class="m-0 font-weight-bold text-primary">Create Useful Link</h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Name" class="font-weight-bold"></label>
+                    <input asp-for="Name" class="form-control" placeholder="e.g. About Us, Our Services" maxlength="50" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Section" class="font-weight-bold"></label>
+                    <select asp-for="Section" asp-items="Html.GetEnumSelectList<UsefulLinkSection>()" class="form-control">
+                        <option value="">-- Select Section --</option>
+                    </select>
+                    <span asp-validation-for="Section" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label asp-for="Url" class="font-weight-bold"></label>
+                    <input asp-for="Url" class="form-control" placeholder="e.g. /about or https://example.com" maxlength="1000" />
+                    <span asp-validation-for="Url" class="text-danger"></span>
+                </div>
+
+                <hr />
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a asp-action="Index" class="btn btn-secondary rounded-pill px-4">Cancel</a>
+                    <button type="submit" class="btn btn-success rounded-pill px-4">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

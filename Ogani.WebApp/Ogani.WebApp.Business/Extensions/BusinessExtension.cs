@@ -30,6 +30,7 @@ namespace Ogani.WebApp.Business.Extensions
             services.AddScoped<IHeroService, HeroManager>();
             services.AddScoped<IContactService, ContactManager>();
             services.AddScoped<ISocialLinkService, SocialLinkManager>();
+            services.AddScoped<IUsefulLinkService, UsefulLinkManager>();
 
             //FileService
             services.AddScoped<IFileService, LocalFileService>();

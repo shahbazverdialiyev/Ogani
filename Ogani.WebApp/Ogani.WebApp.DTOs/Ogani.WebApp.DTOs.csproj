@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Ogani.WebApp.Entities\Ogani.WebApp.Entities.csproj" />
+  </ItemGroup>
+
 </Project>

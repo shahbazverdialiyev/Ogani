@@ -1,4 +1,5 @@
 ﻿using Ogani.WebApp.DTOs.Base;
+using Ogani.WebApp.Entities.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Ogani.WebApp.DTOs.UsefulLinkDTO
 {
     public class UsefulLinkUpdateDTO:BaseDTO<int>
     {
-        public int Section { get; set; }
+        public UsefulLinkSection Section { get; set; }
         public string Name { get; set; } = null!;
         public string Url { get; set; } = null!;
     }
