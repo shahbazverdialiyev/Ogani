@@ -27,10 +27,7 @@ namespace Ogani.WebApp.Business.Services
 
         public override async Task<int> AddAsync(HeroCreateDTO heroDto)
         {
-            ValidationResult validationResult = await _createValidator.ValidateAsync(heroDto);
-
-            if (!validationResult.IsValid)
-                throw new BusinessValidationException(validationResult.Errors);
+            await ValidateForCreateAsync(heroDto);
 
             Hero hero = _mapper.Map<Hero>(heroDto);
 
@@ -44,10 +41,7 @@ namespace Ogani.WebApp.Business.Services
 
         public override async Task UpdateAsync(HeroUpdateDTO heroDto)
         {
-            ValidationResult validationResult = await _updateValidator.ValidateAsync(heroDto);
-
-            if (!validationResult.IsValid)
-                throw new BusinessValidationException(validationResult.Errors);
+            await ValidateForUpdateAsync(heroDto);
 
             Hero hero = await _uoW.HeroRepository.GetByIdAsync(heroDto.Id, tracking: true)
                 ?? throw new NotFoundException(nameof(Hero), heroDto.Id);

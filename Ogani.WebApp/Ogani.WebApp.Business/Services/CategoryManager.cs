@@ -8,6 +8,7 @@ using Ogani.WebApp.DTOs.CategoryDTO;
 using Ogani.WebApp.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,13 +27,7 @@ namespace Ogani.WebApp.Business.Services
 
         public override async Task<int> AddAsync(CategoryCreateDTO dto)
         {
-            ValidationResult validationResult = await _createValidator.ValidateAsync(dto);
-
-            if (await _uoW.CategoryRepository.AnyAsync(c => c.Name == dto.Name))
-                validationResult.Errors.Add(new ValidationFailure(nameof(dto.Name), "Category with this name already exists."));
-
-            if (!validationResult.IsValid)
-                throw new BusinessValidationException(validationResult.Errors);
+            await ValidateForCreateAsync(dto);
 
             Category category = _mapper.Map<Category>(dto);
 
@@ -47,13 +42,7 @@ namespace Ogani.WebApp.Business.Services
 
         public override async Task UpdateAsync(CategoryUpdateDTO dto)
         {
-            ValidationResult validationResult = await _updateValidator.ValidateAsync(dto);
-
-            if (await _uoW.CategoryRepository.AnyAsync(c => c.Name == dto.Name && c.Id != dto.Id))
-                validationResult.Errors.Add(new ValidationFailure(nameof(dto.Name), "Category with this name already exists."));
-
-            if (!validationResult.IsValid)
-                throw new BusinessValidationException(validationResult.Errors);
+            await ValidateForUpdateAsync(dto);
 
             Category category = await _uoW.CategoryRepository.GetForUpdateAsync(dto.Id)
                 ?? throw new NotFoundException(nameof(Category), dto.Id);
@@ -77,10 +66,8 @@ namespace Ogani.WebApp.Business.Services
 
         public override async Task DeleteAsync(int categoryId)
         {
-            Category? category = await _uoW.CategoryRepository.GetByIdAsync(categoryId, tracking: true);
-
-            if (category == null)
-                throw new NotFoundException(nameof(Category), categoryId);
+            Category? category = await _uoW.CategoryRepository.GetByIdAsync(categoryId, tracking: true)
+                ?? throw new NotFoundException(nameof(Category), categoryId);
 
             if (!string.IsNullOrEmpty(category.ImageUrl))
                 await _fileService.DeleteAsync(category.ImageUrl);
@@ -93,6 +80,22 @@ namespace Ogani.WebApp.Business.Services
         {
             List<Category> categories = await _uoW.CategoryRepository.GetCategoriesWithProductsAsync();
             return await _mapper.Map<Task<List<CategoryReadDTO>>>(categories);
+        }
+
+        protected override async Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(CategoryCreateDTO dto)
+        {
+            if (await _uoW.CategoryRepository.AnyAsync(c => c.Name == dto.Name))
+                return [(new ValidationFailure(nameof(dto.Name), "Category with this name already exists."))];
+
+            return [];
+        }
+
+        protected override async Task<List<ValidationFailure>> AddValidationFailureForUpdateAsync(CategoryUpdateDTO dto)
+        {
+            if (await _uoW.CategoryRepository.AnyAsync(c => c.Name == dto.Name && c.Id != dto.Id))
+                return [(new ValidationFailure(nameof(dto.Name), "Category with this name already exists."))];
+
+            return [];
         }
     }
 }

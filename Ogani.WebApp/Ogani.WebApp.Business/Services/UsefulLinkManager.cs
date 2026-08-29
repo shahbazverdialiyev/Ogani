@@ -20,27 +20,21 @@ namespace Ogani.WebApp.Business.Services
         public UsefulLinkManager(IUoW uoW, IMapper mapper, IValidator<UsefulLinkCreateDTO> createValidator, IValidator<UsefulLinkUpdateDTO> updateValidator)
             : base(uoW, mapper, createValidator, updateValidator) { }
 
-        public override async Task<int> AddAsync(UsefulLinkCreateDTO usefulLinkDto)
+        protected override async Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(UsefulLinkCreateDTO usefulLinkDto)
         {
             bool isExist = await _uoW.UsefulLinkRepository.AnyAsync(u => u.Status &&
                                                                       u.Name == usefulLinkDto.Name);
 
-            if (isExist)
-                throw new BusinessValidationException([new ValidationFailure(nameof(usefulLinkDto.Name), "Link with this name already exists.")]);
-
-            return await base.AddAsync(usefulLinkDto);
+            return isExist ? [new ValidationFailure(nameof(usefulLinkDto.Name), "Link with this name already exists.")] : [];
         }
 
-        public override async Task UpdateAsync(UsefulLinkUpdateDTO usefulLinkDto)
+        protected override async Task<List<ValidationFailure>> AddValidationFailureForUpdateAsync(UsefulLinkUpdateDTO usefulLinkDto)
         {
             bool isExist = await _uoW.UsefulLinkRepository.AnyAsync(u => u.Id != usefulLinkDto.Id &&
-                                                                     u.Status &&
-                                                                     u.Name == usefulLinkDto.Name);
+                                                                         u.Status &&
+                                                                         u.Name == usefulLinkDto.Name);
 
-            if (isExist)
-                throw new BusinessValidationException([new ValidationFailure(nameof(usefulLinkDto.Name), "Link with this name already exists.")]);
-
-            await base.UpdateAsync(usefulLinkDto);
+            return isExist ? [new ValidationFailure(nameof(usefulLinkDto.Name), "Link with this name already exists.")] : [];
         }
     }
 }

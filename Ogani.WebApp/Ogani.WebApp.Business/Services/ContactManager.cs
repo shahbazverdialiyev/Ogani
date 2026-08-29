@@ -19,27 +19,21 @@ namespace Ogani.WebApp.Business.Services
         public ContactManager(IUoW uoW, IMapper mapper, IValidator<ContactCreateDTO> createValiadtor, IValidator<ContactUpdateDTO> updateValidator)
             : base(uoW, mapper, createValiadtor, updateValidator) { }
 
-        public override async Task<int> AddAsync(ContactCreateDTO contactDto)
+        protected override async Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(ContactCreateDTO contactDto)
         {
-            bool isExist = await _uoW.ContactRepository.AnyAsync(c => c.Status &&
+            bool isExist = await _uoW.ContactRepository.AnyAsync(c => c.Status && c.Title.Equals(contactDto.Title));
+
+            return isExist ? [new ValidationFailure(nameof(contactDto.Title), "Contact with this title already exists.")] : [];
+        }
+
+        protected override async Task<List<ValidationFailure>> AddValidationFailureForUpdateAsync(ContactUpdateDTO contactDto)
+        {
+            bool isExist = await _uoW.ContactRepository.AnyAsync(c => c.Id == contactDto.Id &&
+                                                                      c.Status &&
                                                                       c.Title.Equals(contactDto.Title));
 
-            if (isExist)
-                throw new BusinessValidationException([new ValidationFailure(nameof(contactDto.Title), "Contact with this title already exists.")]);
-
-            return await base.AddAsync(contactDto);
+            return isExist ? [new ValidationFailure(nameof(contactDto.Title), "Contact with this title already exists.")] : [];
         }
 
-        public override async Task UpdateAsync(ContactUpdateDTO contactDto)
-        {
-            bool isExist = await _uoW.ContactRepository.AnyAsync(c =>c.Id != contactDto.Id &&
-                                                                     c.Status &&
-                                                                     c.Title.Equals(contactDto.Title));
-
-            if (isExist)
-                throw new BusinessValidationException([new ValidationFailure(nameof(contactDto.Title), "Contact with this title already exists.")]);
-
-            await base.UpdateAsync(contactDto);
-        }
     }
 }

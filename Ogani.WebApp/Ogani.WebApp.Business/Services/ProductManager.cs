@@ -9,6 +9,7 @@ using Ogani.WebApp.DTOs.ProductDTO;
 using Ogani.WebApp.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,22 +54,14 @@ namespace Ogani.WebApp.Business.Services
 
         public override async Task<int> AddAsync(ProductCreateDTO dto)
         {
-            ValidationResult validationResult = await _createValidator.ValidateAsync(dto);
-
-            if (await _uoW.ProductRepository.AnyAsync(x => x.Name == dto.Name))
-                validationResult.Errors.Add(new ValidationFailure(nameof(dto.Name), "Product with this name already exists."));
-
-            if (!validationResult.IsValid)
-                throw new BusinessValidationException(validationResult.Errors);
-
-            await ValidateCategoryIdAsync(dto.CategoryId);
+            await ValidateForCreateAsync(dto);
 
             Product product = _mapper.Map<Product>(dto);
 
             if (dto.Image is not null)
                 product.ImageUrl = await _fileService.UploadAsync(dto.Image, "products");
 
-            product.Discounts = await GetDiscountsAsync(dto.DiscountIds);
+            await PrepareEntityForCreateAsync(product, dto);
 
             await _uoW.ProductRepository.AddAsync(product);
             await _uoW.SaveChangesAsync();
@@ -78,18 +71,10 @@ namespace Ogani.WebApp.Business.Services
 
         public override async Task UpdateAsync(ProductUpdateDTO dto)
         {
-            ValidationResult validationResult = await _updateValidator.ValidateAsync(dto);
-
-            if (await _uoW.ProductRepository.AnyAsync(x => x.Name == dto.Name && x.Id != dto.Id))
-                validationResult.Errors.Add(new ValidationFailure(nameof(dto.Name), "Another product with this name already exists."));
-
-            if (!validationResult.IsValid)
-                throw new BusinessValidationException(validationResult.Errors);
+            await ValidateForUpdateAsync(dto);
 
             Product product = await _uoW.ProductRepository.GetForUpdateAsync(dto.Id)
                 ?? throw new NotFoundException(nameof(Product), dto.Id);
-
-            await ValidateCategoryIdAsync(dto.CategoryId);
 
             _mapper.Map(dto, product);
 
@@ -110,7 +95,7 @@ namespace Ogani.WebApp.Business.Services
                 product.ImageUrl = await _fileService.UploadAsync(dto.Image, "products");
             }
 
-            product.Discounts = await GetDiscountsAsync(dto.DiscountIds);
+            await PrepareEntityForUpdateAsync(product, dto);
 
             _uoW.ProductRepository.Update(product);
             await _uoW.SaveChangesAsync();
@@ -131,15 +116,55 @@ namespace Ogani.WebApp.Business.Services
         public async Task<IReadOnlyCollection<ProductReadDTO>> GetProductsByCategoryIdAsync(int categoryId)
         {
             IReadOnlyCollection<Product> products = await _uoW.ProductRepository.GetProductsByCategoryIdAsync(categoryId);
-             
+
             return _mapper.Map<IReadOnlyCollection<ProductReadDTO>>(products);
         }
 
         public async Task<IReadOnlyCollection<ProductReadDTO>> GetProductsByDiscountIdAsync(int discountId)
         {
             IReadOnlyCollection<Product> products = await _uoW.ProductRepository.GetProductsByDiscountIdAsync(discountId);
-             
+
             return _mapper.Map<IReadOnlyCollection<ProductReadDTO>>(products);
+        }
+
+        protected async override Task ValidateForCreateAsync(ProductCreateDTO dto)
+        {
+            await base.ValidateForCreateAsync(dto);
+
+            await ValidateCategoryIdAsync(dto.CategoryId);
+        }
+
+        protected async override Task ValidateForUpdateAsync(ProductUpdateDTO dto)
+        {
+            await base.ValidateForUpdateAsync(dto);
+
+            await ValidateCategoryIdAsync(dto.CategoryId);
+        }
+
+        protected async override Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(ProductCreateDTO dto)
+        {
+            if (await _uoW.ProductRepository.AnyAsync(x => x.Name == dto.Name))
+                return [new ValidationFailure(nameof(dto.Name), "Product with this name already exists.")];
+
+            return [];
+        }
+
+        protected async override Task<List<ValidationFailure>> AddValidationFailureForUpdateAsync(ProductUpdateDTO dto)
+        {
+            if (await _uoW.ProductRepository.AnyAsync(x => x.Name == dto.Name && x.Id != dto.Id))
+                return [(new ValidationFailure(nameof(dto.Name), "Another product with this name already exists."))];
+
+            return [];
+        }
+
+        protected async override Task PrepareEntityForCreateAsync(Product product, ProductCreateDTO dto)
+        {
+            product.Discounts = await GetDiscountsAsync(dto.DiscountIds);
+        }
+
+        protected async override Task PrepareEntityForUpdateAsync(Product product, ProductUpdateDTO dto)
+        {
+            product.Discounts = await GetDiscountsAsync(dto.DiscountIds);
         }
 
         private async Task ValidateCategoryIdAsync(int? categoryId)

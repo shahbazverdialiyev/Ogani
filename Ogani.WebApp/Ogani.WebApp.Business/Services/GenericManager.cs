@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DataAccess.Interfaces;
@@ -62,12 +63,11 @@ namespace Ogani.WebApp.Business.Services
 
         public virtual async Task<int> AddAsync(TCreate dto)
         {
-            ValidationResult validationResult = await _createValidator.ValidateAsync(dto);
-
-            if (!validationResult.IsValid)
-                throw new BusinessValidationException(validationResult.Errors);
+            await ValidateForCreateAsync(dto);
 
             TEntity entity = _mapper.Map<TEntity>(dto);
+
+            await PrepareEntityForCreateAsync(entity, dto);
 
             await _uoW.GetRepository<TEntity, int>().AddAsync(entity);
             await _uoW.SaveChangesAsync();
@@ -77,10 +77,7 @@ namespace Ogani.WebApp.Business.Services
 
         public virtual async Task UpdateAsync(TUpdate updatedEntity)
         {
-            ValidationResult validationResult = await _updateValidator.ValidateAsync(updatedEntity);
-
-            if (!validationResult.IsValid)
-                throw new BusinessValidationException(validationResult.Errors);
+            await ValidateForUpdateAsync(updatedEntity);
 
             var repository = _uoW.GetRepository<TEntity, int>();
 
@@ -88,6 +85,8 @@ namespace Ogani.WebApp.Business.Services
                 ?? throw new NotFoundException(typeof(TEntity).Name, updatedEntity.Id);
 
             _mapper.Map(updatedEntity, existEntity);
+
+            await PrepareEntityForUpdateAsync(existEntity, updatedEntity);
 
             repository.Update(existEntity);
             await _uoW.SaveChangesAsync();
@@ -103,5 +102,34 @@ namespace Ogani.WebApp.Business.Services
             repository.Delete(entity);
             await _uoW.SaveChangesAsync();
         }
+
+        protected async virtual Task ValidateForCreateAsync(TCreate dto)
+        {
+            ValidationResult validationResult = await _createValidator.ValidateAsync(dto);
+
+            validationResult.Errors.AddRange(await AddValidationFailureForCreateAsync(dto));
+
+            if (!validationResult.IsValid)
+                throw new BusinessValidationException(validationResult.Errors);
+        }
+
+        protected async virtual Task ValidateForUpdateAsync(TUpdate dto)
+        {
+            ValidationResult validationResult = await _updateValidator.ValidateAsync(dto);
+
+            validationResult.Errors.AddRange(await AddValidationFailureForUpdateAsync(dto));
+
+            if (!validationResult.IsValid)
+                throw new BusinessValidationException(validationResult.Errors);
+        }
+
+        protected virtual Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(TCreate dto)
+            => Task.FromResult(new List<ValidationFailure>());
+
+        protected virtual Task<List<ValidationFailure>> AddValidationFailureForUpdateAsync(TUpdate dto)
+            => Task.FromResult(new List<ValidationFailure>());
+
+        protected virtual Task PrepareEntityForCreateAsync(TEntity entity, TCreate dto) => Task.CompletedTask;
+        protected virtual Task PrepareEntityForUpdateAsync(TEntity entity, TUpdate dto) => Task.CompletedTask;
     }
 }
