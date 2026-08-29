@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.DTOs.HeroDTO
 {
-    public class HeroUpdateDTO : BaseDTO<int>
+    public class HeroUpdateDTO : BaseDTO<int>, IWithImageDTO
     {
         public string Title { get; set; } = null!;
         public string Subtitle { get; set; } = null!;

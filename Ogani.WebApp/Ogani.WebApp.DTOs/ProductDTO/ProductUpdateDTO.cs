@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.DTOs.ProductDTO
 {
-    public class ProductUpdateDTO : BaseDTO<int>, IProductRequest
+    public class ProductUpdateDTO : BaseDTO<int>, IProductRequest, IRemovableImageDTO
     {
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
@@ -21,7 +21,7 @@ namespace Ogani.WebApp.DTOs.ProductDTO
         public bool IsAvailable { get; set; }
 
         public IFormFile? Image { get; set; }
-        public string? ImageUrl {  get; set; }
+        public string? ImageUrl { get; set; }
         public bool RemoveExistingImage { get; set; }
 
         public int? CategoryId { get; set; }

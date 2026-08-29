@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.DTOs.CategoryDTO
 {
-    public class CategoryUpdateDTO : BaseDTO<int>
+    public class CategoryUpdateDTO : BaseDTO<int>, IRemovableImageDTO
     {
         public string Name { get; set; } = null!;
         public string? Description { get; set; }

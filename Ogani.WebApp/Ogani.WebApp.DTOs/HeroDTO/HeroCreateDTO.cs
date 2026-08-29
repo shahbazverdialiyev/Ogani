@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Ogani.WebApp.DTOs.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.DTOs.HeroDTO
 {
-    public class HeroCreateDTO
+    public class HeroCreateDTO : IWithImageDTO
     {
         public string Title { get; set; } = null!;
         public string Subtitle { get; set; } = null!;
@@ -16,6 +17,6 @@ namespace Ogani.WebApp.DTOs.HeroDTO
         public string ButtonText { get; set; } = null!;
         public string ButtonUrl { get; set; } = null!;
 
-        public IFormFile Image { get; set; } = null!;
+        public IFormFile? Image { get; set; }
     }
 }

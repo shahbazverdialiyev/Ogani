@@ -1,21 +1,12 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.Identity.Client;
 using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DataAccess.UnitOfWork;
-using Ogani.WebApp.DTOs.CategoryDTO;
 using Ogani.WebApp.DTOs.DiscountDTO;
 using Ogani.WebApp.DTOs.ProductDTO;
 using Ogani.WebApp.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Business.Services
 {
@@ -27,7 +18,7 @@ namespace Ogani.WebApp.Business.Services
         protected override async Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(DiscountCreateDTO discountDto)
         {
             if (await _uoW.DiscountRepository.AnyAsync(d => d.Code == discountDto.Code))
-                return [(new ValidationFailure(nameof(discountDto.Code), "Discount with this code name already exists."))];
+                return [new ValidationFailure(nameof(discountDto.Code), "Discount with this code name already exists.")];
 
             return [];
         }
@@ -35,7 +26,7 @@ namespace Ogani.WebApp.Business.Services
         protected override async Task<List<ValidationFailure>> AddValidationFailureForUpdateAsync(DiscountUpdateDTO discountDto)
         {
             if (await _uoW.DiscountRepository.AnyAsync(c => c.Code == discountDto.Code && c.Id != discountDto.Id))
-                return [(new ValidationFailure(nameof(discountDto.Code), "Discount with this code name already exists."))];
+                return [new ValidationFailure(nameof(discountDto.Code), "Discount with this code name already exists.")];
 
             return [];
         }

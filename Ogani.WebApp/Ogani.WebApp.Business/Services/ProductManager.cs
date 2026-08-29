@@ -4,113 +4,19 @@ using FluentValidation.Results;
 using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.Business.Validators.ProductValidators;
+using Ogani.WebApp.DataAccess.Interfaces;
 using Ogani.WebApp.DataAccess.UnitOfWork;
 using Ogani.WebApp.DTOs.ProductDTO;
 using Ogani.WebApp.Entities;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Business.Services
 {
-    public class ProductManager : GenericManager<Product, ProductReadDTO, ProductDetailReadDTO, ProductCreateDTO, ProductUpdateDTO>, IProductService
+    public class ProductManager : WithImageGenericManager<Product, ProductReadDTO, ProductDetailReadDTO, ProductCreateDTO, ProductUpdateDTO>, IProductService
     {
-        private readonly IFileService _fileService;
 
         public ProductManager(IUoW uow, IMapper mapper, IValidator<ProductCreateDTO> createValidator, IValidator<ProductUpdateDTO> updateValidator, IFileService fileService)
-            : base(uow, mapper, createValidator, updateValidator)
+            : base(uow, mapper, createValidator, updateValidator, fileService,imageFolderName: "products")
         {
-            _fileService = fileService;
-        }
-
-        public override async Task<ProductDetailReadDTO> GetByIdAsync(int id)
-        {
-            Product product = await _uoW.ProductRepository.GetByIdAsync(id)
-                ?? throw new NotFoundException(nameof(Product), id);
-
-            return _mapper.Map<ProductDetailReadDTO>(product);
-        }
-
-        public override async Task<IReadOnlyCollection<ProductReadDTO>> GetAllAsync()
-        {
-            IReadOnlyCollection<Product> products = await _uoW.ProductRepository.GetAllAsync();
-            return _mapper.Map<IReadOnlyCollection<ProductReadDTO>>(products);
-        }
-
-        public override async Task<ProductUpdateDTO> GetForUpdateAsync(int id)
-        {
-            Product product = await _uoW.ProductRepository.GetForUpdateAsync(id)
-                ?? throw new NotFoundException(nameof(Product), id);
-
-            ProductUpdateDTO dto = _mapper.Map<ProductUpdateDTO>(product);
-
-            dto.DiscountIds = product.Discounts.Select(x => x.Id).ToList();
-
-            return dto;
-        }
-
-        public override async Task<int> AddAsync(ProductCreateDTO dto)
-        {
-            await ValidateForCreateAsync(dto);
-
-            Product product = _mapper.Map<Product>(dto);
-
-            if (dto.Image is not null)
-                product.ImageUrl = await _fileService.UploadAsync(dto.Image, "products");
-
-            await PrepareEntityForCreateAsync(product, dto);
-
-            await _uoW.ProductRepository.AddAsync(product);
-            await _uoW.SaveChangesAsync();
-
-            return product.Id;
-        }
-
-        public override async Task UpdateAsync(ProductUpdateDTO dto)
-        {
-            await ValidateForUpdateAsync(dto);
-
-            Product product = await _uoW.ProductRepository.GetForUpdateAsync(dto.Id)
-                ?? throw new NotFoundException(nameof(Product), dto.Id);
-
-            _mapper.Map(dto, product);
-
-            if (dto.RemoveExistingImage && dto.Image == null)
-            {
-                if (!string.IsNullOrEmpty(product.ImageUrl))
-                {
-                    await _fileService.DeleteAsync(product.ImageUrl);
-                    product.ImageUrl = null;
-                }
-            }
-
-            else if (dto.Image is not null)
-            {
-                if (!string.IsNullOrEmpty(product.ImageUrl))
-                    await _fileService.DeleteAsync(product.ImageUrl);
-
-                product.ImageUrl = await _fileService.UploadAsync(dto.Image, "products");
-            }
-
-            await PrepareEntityForUpdateAsync(product, dto);
-
-            _uoW.ProductRepository.Update(product);
-            await _uoW.SaveChangesAsync();
-        }
-
-        public override async Task DeleteAsync(int productId)
-        {
-            Product product = await _uoW.ProductRepository.GetByIdAsync(productId, tracking: true)
-                ?? throw new NotFoundException(nameof(Product), productId);
-
-            if (!string.IsNullOrEmpty(product.ImageUrl))
-                await _fileService.DeleteAsync(product.ImageUrl);
-
-            _uoW.ProductRepository.Delete(product);
-            await _uoW.SaveChangesAsync();
         }
 
         public async Task<IReadOnlyCollection<ProductReadDTO>> GetProductsByCategoryIdAsync(int categoryId)
@@ -127,55 +33,44 @@ namespace Ogani.WebApp.Business.Services
             return _mapper.Map<IReadOnlyCollection<ProductReadDTO>>(products);
         }
 
-        protected async override Task ValidateForCreateAsync(ProductCreateDTO dto)
-        {
-            await base.ValidateForCreateAsync(dto);
-
-            await ValidateCategoryIdAsync(dto.CategoryId);
-        }
-
-        protected async override Task ValidateForUpdateAsync(ProductUpdateDTO dto)
-        {
-            await base.ValidateForUpdateAsync(dto);
-
-            await ValidateCategoryIdAsync(dto.CategoryId);
-        }
+        protected override IRepository<Product, int> GetRepository() => _uoW.ProductRepository;
 
         protected async override Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(ProductCreateDTO dto)
         {
-            if (await _uoW.ProductRepository.AnyAsync(x => x.Name == dto.Name))
-                return [new ValidationFailure(nameof(dto.Name), "Product with this name already exists.")];
+            var failures = new List<ValidationFailure>();
 
-            return [];
+            if (await _uoW.ProductRepository.AnyAsync(x => x.Name == dto.Name))
+                failures.Add(new ValidationFailure(nameof(dto.Name), "Product with this name already exists."));
+
+            if (dto.CategoryId.HasValue && !await _uoW.CategoryRepository.AnyAsync(c => c.Id == dto.CategoryId.Value))
+                failures.Add(new ValidationFailure(nameof(dto.CategoryId), $"Category with id {dto.CategoryId.Value} was not found."));
+
+            return failures;
         }
 
         protected async override Task<List<ValidationFailure>> AddValidationFailureForUpdateAsync(ProductUpdateDTO dto)
         {
-            if (await _uoW.ProductRepository.AnyAsync(x => x.Name == dto.Name && x.Id != dto.Id))
-                return [(new ValidationFailure(nameof(dto.Name), "Another product with this name already exists."))];
+            var failures = new List<ValidationFailure>();
 
-            return [];
+            if (await _uoW.ProductRepository.AnyAsync(x => x.Name == dto.Name && x.Id != dto.Id))
+                failures.Add(new ValidationFailure(nameof(dto.Name), "Product with this name already exists."));
+
+            if (dto.CategoryId.HasValue && !await _uoW.CategoryRepository.AnyAsync(c => c.Id == dto.CategoryId.Value))
+                failures.Add(new ValidationFailure(nameof(dto.CategoryId), $"Category with id {dto.CategoryId.Value} was not found."));
+
+            return failures;
         }
 
         protected async override Task PrepareEntityForCreateAsync(Product product, ProductCreateDTO dto)
         {
+            await base.PrepareEntityForCreateAsync(product, dto);
             product.Discounts = await GetDiscountsAsync(dto.DiscountIds);
         }
 
         protected async override Task PrepareEntityForUpdateAsync(Product product, ProductUpdateDTO dto)
         {
+            await base.PrepareEntityForUpdateAsync(product, dto);
             product.Discounts = await GetDiscountsAsync(dto.DiscountIds);
-        }
-
-        private async Task ValidateCategoryIdAsync(int? categoryId)
-        {
-            if (!categoryId.HasValue)
-                return;
-
-            bool categoryExists = await _uoW.CategoryRepository.AnyAsync(c => c.Id == categoryId.Value);
-
-            if (!categoryExists)
-                throw new NotFoundException(nameof(Category), categoryId.Value);
         }
 
         private async Task<List<Discount>> GetDiscountsAsync(ICollection<int> discountIds)

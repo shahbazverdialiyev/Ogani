@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Ogani.WebApp.DTOs.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.DTOs.ProductDTO
 {
-    public class ProductCreateDTO : IProductRequest
+    public class ProductCreateDTO : IProductRequest,IWithImageDTO
     {
         public string Name { get; set; } = null!;
         public string? Description { get; set; }

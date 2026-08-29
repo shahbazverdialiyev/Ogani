@@ -1,19 +1,12 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DataAccess.Interfaces;
 using Ogani.WebApp.DataAccess.UnitOfWork;
 using Ogani.WebApp.DTOs.Base;
-using Ogani.WebApp.DTOs.ProductDTO;
 using Ogani.WebApp.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Business.Services
 {
@@ -39,7 +32,7 @@ namespace Ogani.WebApp.Business.Services
 
         public virtual async Task<TDetailRead> GetByIdAsync(int id)
         {
-            TEntity? entity = await _uoW.GetRepository<TEntity, int>().GetByIdAsync(id)
+            TEntity? entity = await GetEntityAsync(id)
                 ?? throw new NotFoundException(typeof(TEntity).Name, id);
 
             return _mapper.Map<TDetailRead>(entity);
@@ -47,15 +40,13 @@ namespace Ogani.WebApp.Business.Services
 
         public virtual async Task<IReadOnlyCollection<TRead>> GetAllAsync()
         {
-            List<TEntity> entities = await _uoW.GetRepository<TEntity, int>().GetAllAsync();
-            return _mapper.Map<List<TRead>>(entities);
+            IReadOnlyCollection<TEntity> entities = await GetAllEntityAsync();
+            return _mapper.Map<IReadOnlyCollection<TRead>>(entities);
         }
 
         public virtual async Task<TUpdate> GetForUpdateAsync(int id)
         {
-            var repository = _uoW.GetRepository<TEntity, int>();
-
-            TEntity entity = await repository.GetForUpdateAsync(id)
+            TEntity entity = await GetEntityForUpdateAsync(id)
                 ?? throw new NotFoundException(typeof(TEntity).Name, id);
 
             return _mapper.Map<TUpdate>(entity);
@@ -69,7 +60,7 @@ namespace Ogani.WebApp.Business.Services
 
             await PrepareEntityForCreateAsync(entity, dto);
 
-            await _uoW.GetRepository<TEntity, int>().AddAsync(entity);
+            await GetRepository().AddAsync(entity);
             await _uoW.SaveChangesAsync();
 
             return entity.Id;
@@ -79,29 +70,38 @@ namespace Ogani.WebApp.Business.Services
         {
             await ValidateForUpdateAsync(updatedEntity);
 
-            var repository = _uoW.GetRepository<TEntity, int>();
-
-            TEntity existEntity = await repository.GetByIdAsync(updatedEntity.Id, tracking: true)
+            TEntity existEntity = await GetEntityForUpdateAsync(updatedEntity.Id)
                 ?? throw new NotFoundException(typeof(TEntity).Name, updatedEntity.Id);
 
             _mapper.Map(updatedEntity, existEntity);
 
             await PrepareEntityForUpdateAsync(existEntity, updatedEntity);
 
-            repository.Update(existEntity);
+            GetRepository().Update(existEntity);
             await _uoW.SaveChangesAsync();
         }
 
         public virtual async Task DeleteAsync(int id)
         {
-            var repository = _uoW.GetRepository<TEntity, int>();
-
-            TEntity entity = await repository.GetByIdAsync(id, tracking: true)
+            TEntity entity = await GetEntityAsync(id, tracking: true)
                 ?? throw new NotFoundException(typeof(TEntity).Name, id);
 
-            repository.Delete(entity);
+            await PrepareEntityForDeleteAsync(entity);
+
+            GetRepository().Delete(entity);
             await _uoW.SaveChangesAsync();
         }
+
+        protected virtual async Task<TEntity?> GetEntityAsync(int id, bool tracking = false)
+            => await GetRepository().GetByIdAsync(id, tracking);
+
+        protected virtual async Task<TEntity?> GetEntityForUpdateAsync(int id)
+            => await GetRepository().GetForUpdateAsync(id);
+
+        protected virtual async Task<IReadOnlyCollection<TEntity>> GetAllEntityAsync(bool tracking = false)
+            => await GetRepository().GetAllAsync(tracking);
+
+        protected virtual IRepository<TEntity, int> GetRepository() => _uoW.GetRepository<TEntity, int>();
 
         protected async virtual Task ValidateForCreateAsync(TCreate dto)
         {
@@ -113,7 +113,7 @@ namespace Ogani.WebApp.Business.Services
                 throw new BusinessValidationException(validationResult.Errors);
         }
 
-        protected async virtual Task ValidateForUpdateAsync(TUpdate dto)
+        protected virtual async Task ValidateForUpdateAsync(TUpdate dto)
         {
             ValidationResult validationResult = await _updateValidator.ValidateAsync(dto);
 
@@ -131,5 +131,6 @@ namespace Ogani.WebApp.Business.Services
 
         protected virtual Task PrepareEntityForCreateAsync(TEntity entity, TCreate dto) => Task.CompletedTask;
         protected virtual Task PrepareEntityForUpdateAsync(TEntity entity, TUpdate dto) => Task.CompletedTask;
+        protected virtual Task PrepareEntityForDeleteAsync(TEntity entity) => Task.CompletedTask;
     }
 }

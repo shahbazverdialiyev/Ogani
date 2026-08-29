@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Entities
 {
-    public class Category : BaseEntity<int>
+    public class Category : BaseEntity<int>, IImageEntity
     {
         public string Name { get; set; } = null!;
         public string? Description { get; set; }

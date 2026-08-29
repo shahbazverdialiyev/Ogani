@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Ogani.WebApp.DTOs.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
