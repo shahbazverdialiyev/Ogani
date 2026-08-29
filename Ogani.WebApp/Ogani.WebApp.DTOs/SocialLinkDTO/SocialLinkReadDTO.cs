@@ -9,8 +9,8 @@ namespace Ogani.WebApp.DTOs.SocialLinkDTO
 {
     public class SocialLinkReadDTO:BaseDTO<int>
     {
-        public string Platform { get; set; } = null!;
-        public string Url { get; set; } = null!;
+        public string Platform { get; init; } = null!;
+        public string Url { get; init; } = null!;
 
         public DateTime CreatedDate { get; init; }
     }

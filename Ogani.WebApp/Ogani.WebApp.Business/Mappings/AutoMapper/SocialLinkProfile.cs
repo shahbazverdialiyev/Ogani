@@ -16,7 +16,7 @@ namespace Ogani.WebApp.Business.Mappings.AutoMapper
             CreateMap<SocialLink, SocialLinkReadDTO>();
             CreateMap<SocialLinkCreateDTO, SocialLink>();
             CreateMap<SocialLinkUpdateDTO, SocialLink>();
-            CreateMap<SocialLinkReadDTO, SocialLinkUpdateDTO>();
+            CreateMap<SocialLink, SocialLinkUpdateDTO>();
         }
     }
 }

@@ -1,0 +1,38 @@
+﻿@using Ogani.WebApp.DTOs.SocialLinkDTO
+@model SocialLinkCreateDTO
+
+@{
+    ViewData["Title"] = "Create Social Link";
+}
+
+<div class="container-fluid pt-4">
+    <div class="card mb-4 col-md-8 mx-auto shadow-sm border-0 rounded-lg">
+        <div class="card-header py-3 bg-white border-bottom-0">
+            <h6 class="m-0 font-weight-bold text-primary">Create Social Link</h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                <div class="form-group mb-3">
+                    <label asp-for="Platform" class="font-weight-bold"></label>
+                    <input asp-for="Platform" class="form-control" placeholder="e.g. Facebook, Instagram, LinkedIn" />
+                    <span asp-validation-for="Platform" class="text-danger"></span>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label asp-for="Url" class="font-weight-bold"></label>
+                    <input asp-for="Url" class="form-control" placeholder="e.g. https://facebook.com/yourpage" />
+                    <span asp-validation-for="Url" class="text-danger"></span>
+                </div>
+
+                <hr />
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a asp-action="Index" class="btn btn-secondary rounded-pill px-4">Cancel</a>
+                    <button type="submit" class="btn btn-success rounded-pill px-4">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
