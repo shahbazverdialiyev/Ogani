@@ -135,7 +135,6 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
             catch (NotFoundException ex)
             {
                 TempData["NotifyError"] = ex.Message;
-
             }
 
             return RedirectToAction(nameof(Index));
