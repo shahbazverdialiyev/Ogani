@@ -12,6 +12,8 @@ namespace Ogani.WebApp.DataAccess.Interfaces
         where TEntity : BaseEntity<TKey>
         where TKey : notnull
     {
+        IQueryable<TEntity> GetQuery();
+
         Task<List<TEntity>> GetAllAsync(bool tracking = false);
 
         Task<TEntity?> GetByIdAsync(TKey id, bool tracking = false);

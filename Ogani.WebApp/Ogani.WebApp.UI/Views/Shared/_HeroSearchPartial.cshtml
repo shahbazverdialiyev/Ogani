@@ -1,0 +1,16 @@
+﻿<div class="hero__search">
+
+    <div class="hero__search__form">
+        <form id="shop-search-form" asp-controller="Shop" asp-action="Index" method="get">
+            <input name="Search" value="@Context.Request.Query["Search"]" type="text" placeholder="What do yo u need?">
+            <button type="submit" class="site-btn">SEARCH</button>
+        </form>
+    </div>
+
+    @await Component.InvokeAsync("Contacts", new { viewName = "HeroPhone" })
+
+</div>
+
+@section Scripts {
+    <script src="/assets/js/custom/products-filter.js"></script>
+}

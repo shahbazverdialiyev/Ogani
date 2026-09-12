@@ -1,0 +1,124 @@
+﻿@using Ogani.WebApp.DTOs.Client
+@using Ogani.WebApp.DTOs.Client.ProductDTO
+@model PagedResultDTO<ProductCardDTO>
+
+
+@if (Model.TotalItems <= 0)
+{
+    <div class="col-12 text-center py-5">
+
+        <h4>No products found.</h4>
+
+        <p>
+            Try changing your search or filters.
+        </p>
+
+    </div>
+}
+else
+{
+    <div class="filter__item pt-0 border-0">
+        <div class="row justify-content-end">
+            <div class="col-lg-4 col-md-4">
+                <div class="filter__found">
+                    <h6><span>@Model.TotalItems</span> Products found</h6>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-3">
+                <div class="filter__option">
+                    <span class="icon_grid-2x2"></span>
+                    <span class="icon_ul"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        @foreach (var product in Model.Items)
+        {
+            <div class="col-lg-4 col-md-6 col-sm-6">
+
+                <div class="product__item interactive-item" onclick="window.location.href='@Url.Action("Details", new { id = product.Id })'">
+
+            <div class="product__item__pic"
+                         style="background-image:url('@product.ImageUrl')">
+
+                        <ul class="product__item__pic__hover">
+
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-heart"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-retweet"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-shopping-cart"></i>
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                    <div class="product__item__text">
+
+                        <h6>
+                            <a asp-controller="Shop" asp-action="Details" asp-route-id="@product.Id">
+                            @product.Name
+                            </a>
+                        </h6>
+
+                    @if (product.DiscountPercentage > 0)
+                    {
+                            <h5>
+
+                                <del>
+                                    $@product.Price.ToString("F2")
+                                </del>
+
+                                $@product.DiscountedPrice.ToString("F2")
+
+                            </h5>
+                    }
+                    else
+                    {
+                            <h5>
+                                $@product.Price.ToString("F2")
+                            </h5>
+                    }
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+    </div>
+}
+
+
+
+@if (Model.TotalPages > 1)
+{
+    <div class="product__pagination">
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <a href="#"
+               class="page_link d-inline-flex justify-content-center align-items-center"
+               style="@(i == Model.PageIndex ? "background-color: #7fad39;" : "")"
+               data-page="@i">
+
+                @i
+
+            </a>
+        }
+
+    </div>
+}

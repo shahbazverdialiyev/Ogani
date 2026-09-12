@@ -1,0 +1,9 @@
+﻿@using Ogani.WebApp.DTOs.Client.ContactDTO
+@model IReadOnlyCollection<ContactDetailDTO>
+
+<ul>
+    @foreach (var item in Model)
+    {
+        <li>@item.Title : @item.Content</li>
+    }
+</ul>

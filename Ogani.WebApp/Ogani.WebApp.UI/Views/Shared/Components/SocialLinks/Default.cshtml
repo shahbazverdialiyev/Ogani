@@ -1,0 +1,10 @@
+﻿@using Ogani.WebApp.DTOs.Client.SocialLinkDTO
+@model IReadOnlyCollection<SocialLinkDetailDTO>
+
+
+<div class="header__top__right__social">
+    @foreach (var link in Model)
+    {
+        <a href="@link.Url" title="@link.Platform"><i class="fa fa-@link.Platform.ToLower().Trim()"></i></a>
+    }
+</div>

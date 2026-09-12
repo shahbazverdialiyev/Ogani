@@ -1,0 +1,58 @@
+﻿@using Ogani.WebApp.DTOs.Client
+@using Ogani.WebApp.DTOs.Client.ProductDTO
+@model PagedResultDTO<ProductCardDTO>
+
+<div class="col-lg-3 col-md-5">
+    <div class="sidebar">
+        <div class="sidebar__item">
+            <h4>Category</h4>
+            <ul>
+                @if (ViewBag.Categories != null)
+                    @foreach (var category in ViewBag.Categories)
+                    {
+                        <li class="@(ViewBag.Filter.CategoryId == category.Id ? "category-selected" : "category-list-item")">
+                            <a class="category-filter" data-category-id="@category.Id">@category.Name</a>
+                        </li>
+                    }
+            </ul>
+        </div>
+        @if (Model.MinPrice != Model.MaxPrice)
+        {
+            <div class="sidebar__item">
+                <h4>Price</h4>
+                <div class="price-range-wrap">
+                    <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
+                         data-min="@Model.MinPrice" data-max="@Model.MaxPrice">
+                    </div>
+                    <div class="range-slider">
+                        <div class="price-input">
+                            <input type="text" id="minamount" step="0.01">
+                            <input type="text" id="maxamount" step="0.01">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+<div class="col-lg-9 col-md-7">
+    <div class="col-lg-4 col-md-5 position-absolute">
+        <div class="filter__sort">
+            <span>Sort By</span>
+            <select>
+                <option value="default">Default</option>
+                <option value="name-asc">Name</option>
+                <option value="price-asc">Price low to high</option>
+                <option value="price-desc">Price high to low</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="product-list">
+
+        @await Html.PartialAsync(
+                 "_ProductListPartial",
+                 Model)
+
+    </div>
+</div>

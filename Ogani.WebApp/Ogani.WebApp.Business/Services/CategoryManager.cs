@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.EntityFrameworkCore;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DataAccess.UnitOfWork;
 using Ogani.WebApp.DTOs.CategoryDTO;
+using Ogani.WebApp.DTOs.Client.CategoryDTO;
 using Ogani.WebApp.Entities;
 
 namespace Ogani.WebApp.Business.Services
@@ -19,6 +21,16 @@ namespace Ogani.WebApp.Business.Services
         {
             List<Category> categories = await _uoW.CategoryRepository.GetCategoriesWithProductsAsync();
             return _mapper.Map<List<CategoryReadDTO>>(categories);
+        }
+
+        public async Task<IReadOnlyCollection<CategoryCardDTO>> GetCategoriesForUIAsync()
+        {
+            return await GetRepository.GetQuery().Where(c => c.Status).Select(c => new CategoryCardDTO
+            {
+                Id = c.Id,
+                Name = c.Name,
+                ImageUrl = c.ImageUrl,
+            }).ToListAsync();
         }
 
         protected override async Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(CategoryCreateDTO dto)

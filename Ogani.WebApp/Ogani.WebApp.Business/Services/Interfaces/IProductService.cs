@@ -1,4 +1,6 @@
-﻿using Ogani.WebApp.DTOs.ProductDTO;
+﻿using Ogani.WebApp.DTOs.Client;
+using Ogani.WebApp.DTOs.Client.ProductDTO;
+using Ogani.WebApp.DTOs.ProductDTO;
 
 namespace Ogani.WebApp.Business.Services.Interfaces
 {
@@ -7,5 +9,14 @@ namespace Ogani.WebApp.Business.Services.Interfaces
         Task<IReadOnlyCollection<ProductReadDTO>> GetProductsByCategoryIdAsync(int categoryId);
 
         Task<IReadOnlyCollection<ProductReadDTO>> GetProductsByDiscountIdAsync(int categoryId);
+
+        Task<IReadOnlyCollection<ProductCardDTO>> GetProductsForShopAsync();
+        Task<PagedResultDTO<ProductCardDTO>> GetShopProductsAsync(ProductFilterDTO filter);
+        Task<IReadOnlyCollection<ProductCardDTO>> GetFeaturedProductsAsync();
+        Task<IReadOnlyCollection<ProductCardDTO>> GetLatestProductsAsync();
+        Task<ProductDetailDTO> GetProductDetailAsync(int id);
+        Task<PriceRangeDTO> GetPriceRangeAsync(int? categoryId);
+        Task<IReadOnlyCollection<ProductCardDTO>> GetProductsByCategoryForUIAsync(int id);
+        Task<IReadOnlyCollection<ProductCardDTO>> GetDiscountedProductsAsync();
     }
 }

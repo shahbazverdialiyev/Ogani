@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
+using Microsoft.EntityFrameworkCore;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DataAccess.UnitOfWork;
+using Ogani.WebApp.DTOs.Client.SocialLinkDTO;
 using Ogani.WebApp.DTOs.SocialLinkDTO;
 using Ogani.WebApp.Entities;
 
@@ -12,6 +14,15 @@ namespace Ogani.WebApp.Business.Services
     {
         public SocialLinkManager(IUoW uoW, IMapper mapper, IValidator<SocialLinkCreateDTO> createValidator, IValidator<SocialLinkUpdateDTO> updateValidator)
             : base(uoW, mapper, createValidator, updateValidator) { }
+
+        public async Task<IReadOnlyCollection<SocialLinkDetailDTO>> GetSocialLinksForUIAsync()
+        {
+            return await GetRepository.GetQuery().Where(s => s.Status).Select(s => new SocialLinkDetailDTO()
+            {
+                Platform = s.Platform,
+                Url = s.Url,
+            }).ToListAsync();
+        }
 
         protected override async Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(SocialLinkCreateDTO socialLinkDto)
         {

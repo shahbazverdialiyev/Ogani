@@ -24,6 +24,11 @@ namespace Ogani.WebApp.DataAccess.Concretes.EFCore
             _context = context;
         }
 
+        public virtual IQueryable<TEntity> GetQuery()
+        {
+            return Table.AsNoTracking();
+        }
+
         public virtual async Task<TEntity?> GetByIdAsync(TKey id, bool tracking = false)
         {
             return tracking

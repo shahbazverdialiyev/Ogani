@@ -1,14 +1,30 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using Ogani.WebApp.Business.Services.Interfaces;
+using Ogani.WebApp.UI.Models.Home;
 
 namespace Ogani.WebApp.UI.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ICategoryService _categoryService;
+        private readonly IProductService _productService;
 
-        public IActionResult Index()
+        public HomeController(ICategoryService categoryService, IProductService productService)
         {
-            return View();
+            _categoryService = categoryService;
+            _productService = productService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            HomeVM model = new()
+            {
+                Categories = await _categoryService.GetCategoriesForUIAsync(),
+                FeaturedProducts = await _productService.GetFeaturedProductsAsync(),
+                LatestProducts = await _productService.GetLatestProductsAsync()
+            };
+
+            return View(model);
         }
     }
 }

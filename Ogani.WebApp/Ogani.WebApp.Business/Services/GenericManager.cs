@@ -30,6 +30,8 @@ namespace Ogani.WebApp.Business.Services
             _updateValidator = updateValidator;
         }
 
+        protected virtual IRepository<TEntity, int> GetRepository => _uoW.GetRepository<TEntity, int>();
+
         public virtual async Task<TDetailRead> GetByIdAsync(int id)
         {
             TEntity? entity = await GetEntityAsync(id)
@@ -60,7 +62,7 @@ namespace Ogani.WebApp.Business.Services
 
             await PrepareEntityForCreateAsync(entity, dto);
 
-            await GetRepository().AddAsync(entity);
+            await GetRepository.AddAsync(entity);
             await _uoW.SaveChangesAsync();
 
             return entity.Id;
@@ -77,7 +79,7 @@ namespace Ogani.WebApp.Business.Services
 
             await PrepareEntityForUpdateAsync(existEntity, updatedEntity);
 
-            GetRepository().Update(existEntity);
+            GetRepository.Update(existEntity);
             await _uoW.SaveChangesAsync();
         }
 
@@ -88,20 +90,18 @@ namespace Ogani.WebApp.Business.Services
 
             await PrepareEntityForDeleteAsync(entity);
 
-            GetRepository().Delete(entity);
+            GetRepository.Delete(entity);
             await _uoW.SaveChangesAsync();
         }
 
         protected virtual async Task<TEntity?> GetEntityAsync(int id, bool tracking = false)
-            => await GetRepository().GetByIdAsync(id, tracking);
+            => await GetRepository.GetByIdAsync(id, tracking);
 
         protected virtual async Task<TEntity?> GetEntityForUpdateAsync(int id)
-            => await GetRepository().GetForUpdateAsync(id);
+            => await GetRepository.GetForUpdateAsync(id);
 
         protected virtual async Task<IReadOnlyCollection<TEntity>> GetAllEntityAsync(bool tracking = false)
-            => await GetRepository().GetAllAsync(tracking);
-
-        protected virtual IRepository<TEntity, int> GetRepository() => _uoW.GetRepository<TEntity, int>();
+            => await GetRepository.GetAllAsync(tracking);
 
         protected async virtual Task ValidateForCreateAsync(TCreate dto)
         {

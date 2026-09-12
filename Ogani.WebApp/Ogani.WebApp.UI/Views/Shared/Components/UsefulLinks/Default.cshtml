@@ -1,0 +1,24 @@
+﻿@using Ogani.WebApp.DTOs.Client.UsefulLinkDTO
+@model IReadOnlyCollection<UsefulLinkDetailDTO>
+
+<div class="footer__widget">
+    <h6>Useful Links</h6>
+    <ul>
+        @foreach (var link in Model)
+        {
+            @if (link.Section == Ogani.WebApp.Entities.Enums.UsefulLinkSection.Left)
+            {
+                <li><a href="@link.Url">@link.Name</a></li>
+            }
+        }
+    </ul>
+    <ul>
+        @foreach (var link in Model)
+        {
+            @if (link.Section == Ogani.WebApp.Entities.Enums.UsefulLinkSection.Right)
+            {
+                <li><a href="@link.Url">@link.Name</a></li>
+            }
+        }
+    </ul>
+</div>
