@@ -38,22 +38,7 @@ namespace Ogani.WebApp.Business.Services
             return _mapper.Map<IReadOnlyCollection<ProductReadDTO>>(products);
         }
 
-        public async Task<IReadOnlyCollection<ProductCardDTO>> GetProductsForShopAsync()
-        {
-            return await GetRepository.GetQuery().Where(p => p.Status && p.IsAvailable).Select(p => new ProductCardDTO()
-            {
-                Name = p.Name,
-                Price = p.Price,
-                ImageUrl = p.ImageUrl,
-
-                DiscountPercentage = p.Discounts.Where(d => d.Status &&
-                                                           d.StartDate <= DateTime.UtcNow &&
-                                                           d.EndDate >= DateTime.UtcNow)
-                                                 .Max(d => (decimal?)d.DiscountPercentage) ?? 0
-            }).ToListAsync();
-        }
-
-        public async Task<PagedResultDTO<ProductCardDTO>> GetShopProductsAsync(ProductFilterDTO filter)
+        public async Task<PagedResultDTO<ProductCardDTO>> GetProductsForShopAsync(ProductFilterDTO filter)
         {
             IQueryable<Product> query = GetRepository.GetQuery().Where(p => p.Status);
 
@@ -164,33 +149,6 @@ namespace Ogani.WebApp.Business.Services
                                                     .Max(d => (decimal?)d.DiscountPercentage) ?? 0
             }).FirstOrDefaultAsync()
             ?? throw new NotFoundException(nameof(ProductDetailDTO), id);
-        }
-
-        public async Task<PriceRangeDTO> GetPriceRangeAsync(int? categoryId)
-        {
-            IQueryable<Product> query = GetRepository
-                .GetQuery()
-                .Where(p => p.Status);
-
-            if (categoryId.HasValue)
-            {
-                query = query.Where(p =>
-                    p.CategoryId == categoryId.Value);
-            }
-
-            decimal? minPrice = await query
-                .Select(p => (decimal?)p.Price)
-                .MinAsync();
-
-            decimal? maxPrice = await query
-                .Select(p => (decimal?)p.Price)
-                .MaxAsync();
-
-            return new PriceRangeDTO
-            {
-                MinPrice = minPrice ?? 0,
-                MaxPrice = maxPrice ?? 0
-            };
         }
 
         public async Task<IReadOnlyCollection<ProductCardDTO>> GetProductsByCategoryForUIAsync(int id)

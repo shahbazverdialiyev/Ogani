@@ -9,10 +9,10 @@ namespace Ogani.WebApp.DTOs.DiscountDTO
 {
     public class DiscountProductsDTO
     {
-        public int DiscountId { get; init; }
+        public int DiscountId { get; set; }
 
-        public IReadOnlyCollection<ProductReadDTO> Products { get; init; } = [];
+        public IReadOnlyCollection<ProductReadDTO> Products { get; set; } = [];
 
-        public ICollection<int> SelectedProductIds { get; init; } = [];
+        public ICollection<int> SelectedProductIds { get; set; } = [];
     }
 }

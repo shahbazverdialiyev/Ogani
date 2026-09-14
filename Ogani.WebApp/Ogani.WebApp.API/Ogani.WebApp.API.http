@@ -1,0 +1,6 @@
+@Ogani.WebApp.API_HostAddress = http://localhost:5119
+
+GET {{Ogani.WebApp.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -7,15 +7,12 @@ namespace Ogani.WebApp.Business.Services.Interfaces
     public interface IProductService : IService<ProductReadDTO, ProductDetailReadDTO, ProductCreateDTO, ProductUpdateDTO>
     {
         Task<IReadOnlyCollection<ProductReadDTO>> GetProductsByCategoryIdAsync(int categoryId);
-
         Task<IReadOnlyCollection<ProductReadDTO>> GetProductsByDiscountIdAsync(int categoryId);
 
-        Task<IReadOnlyCollection<ProductCardDTO>> GetProductsForShopAsync();
-        Task<PagedResultDTO<ProductCardDTO>> GetShopProductsAsync(ProductFilterDTO filter);
+        Task<PagedResultDTO<ProductCardDTO>> GetProductsForShopAsync(ProductFilterDTO filter);
         Task<IReadOnlyCollection<ProductCardDTO>> GetFeaturedProductsAsync();
         Task<IReadOnlyCollection<ProductCardDTO>> GetLatestProductsAsync();
         Task<ProductDetailDTO> GetProductDetailAsync(int id);
-        Task<PriceRangeDTO> GetPriceRangeAsync(int? categoryId);
         Task<IReadOnlyCollection<ProductCardDTO>> GetProductsByCategoryForUIAsync(int id);
         Task<IReadOnlyCollection<ProductCardDTO>> GetDiscountedProductsAsync();
     }

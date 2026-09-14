@@ -15,22 +15,6 @@ namespace Ogani.WebApp.Business.Services
         public DiscountManager(IUoW uoW, IMapper mapper, IValidator<DiscountCreateDTO> createValidator, IValidator<DiscountUpdateDTO> updateValidator)
             : base(uoW, mapper, createValidator, updateValidator) { }
 
-        protected override async Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(DiscountCreateDTO discountDto)
-        {
-            if (await _uoW.DiscountRepository.AnyAsync(d => d.Code == discountDto.Code))
-                return [new ValidationFailure(nameof(discountDto.Code), "Discount with this code name already exists.")];
-
-            return [];
-        }
-
-        protected override async Task<List<ValidationFailure>> AddValidationFailureForUpdateAsync(DiscountUpdateDTO discountDto)
-        {
-            if (await _uoW.DiscountRepository.AnyAsync(c => c.Code == discountDto.Code && c.Id != discountDto.Id))
-                return [new ValidationFailure(nameof(discountDto.Code), "Discount with this code name already exists.")];
-
-            return [];
-        }
-
         public async Task<DiscountProductsDTO> GetProductsForManageAsync(int discountId)
         {
             Discount discount = await _uoW.DiscountRepository.GetByIdWithProductsAsync(discountId)
@@ -61,6 +45,22 @@ namespace Ogani.WebApp.Business.Services
             }
 
             await _uoW.SaveChangesAsync();
+        }
+
+        protected override async Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(DiscountCreateDTO discountDto)
+        {
+            if (await _uoW.DiscountRepository.AnyAsync(d => d.Code == discountDto.Code))
+                return [new ValidationFailure(nameof(discountDto.Code), "Discount with this code name already exists.")];
+
+            return [];
+        }
+
+        protected override async Task<List<ValidationFailure>> AddValidationFailureForUpdateAsync(DiscountUpdateDTO discountDto)
+        {
+            if (await _uoW.DiscountRepository.AnyAsync(c => c.Code == discountDto.Code && c.Id != discountDto.Id))
+                return [new ValidationFailure(nameof(discountDto.Code), "Discount with this code name already exists.")];
+
+            return [];
         }
 
         private async Task<List<Product>> GetProductsAsync(ICollection<int> productIds)

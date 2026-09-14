@@ -30,8 +30,6 @@ namespace Ogani.WebApp.Business.Services
             _updateValidator = updateValidator;
         }
 
-        protected virtual IRepository<TEntity, int> GetRepository => _uoW.GetRepository<TEntity, int>();
-
         public virtual async Task<TDetailRead> GetByIdAsync(int id)
         {
             TEntity? entity = await GetEntityAsync(id)
@@ -93,6 +91,8 @@ namespace Ogani.WebApp.Business.Services
             GetRepository.Delete(entity);
             await _uoW.SaveChangesAsync();
         }
+
+        protected virtual IRepository<TEntity, int> GetRepository => _uoW.GetRepository<TEntity, int>();
 
         protected virtual async Task<TEntity?> GetEntityAsync(int id, bool tracking = false)
             => await GetRepository.GetByIdAsync(id, tracking);
