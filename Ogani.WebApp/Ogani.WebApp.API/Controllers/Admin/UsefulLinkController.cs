@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DTOs.UsefulLinkDTO;
 
@@ -11,99 +10,42 @@ namespace Ogani.WebApp.API.Controllers.Admin
     {
         private readonly IUsefulLinkService _usefulLinkService;
 
-        public UsefulLinksController(IUsefulLinkService usefulLinkService)
-        {
+        public UsefulLinksController(IUsefulLinkService usefulLinkService) =>
             _usefulLinkService = usefulLinkService;
-        }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var links = await _usefulLinkService.GetAllAsync();
-            return Ok(links);
-        }
+        public async Task<IActionResult> GetAll() =>
+            Ok(await _usefulLinkService.GetAllAsync());
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            try
-            {
-                var link = await _usefulLinkService.GetByIdAsync(id);
-                return Ok(link);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-        }
+        public async Task<IActionResult> GetById(int id) =>
+            Ok(await _usefulLinkService.GetByIdAsync(id));
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] UsefulLinkCreateDTO linkDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var id = await _usefulLinkService.AddAsync(linkDto);
 
-            try
-            {
-                await _usefulLinkService.AddAsync(linkDto);
-                return StatusCode(StatusCodes.Status201Created, new { message = $"Useful link \"{linkDto.Name}\" was created successfully." });
-            }
-            catch (BusinessValidationException ex)
-            {
-                foreach (var error in ex.Errors)
-                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-
-                return BadRequest(ModelState);
-            }
-            catch (BusinessException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id },
+                new { id, message = $"Useful link \"{linkDto.Name}\" was created successfully." }
+            );
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UsefulLinkUpdateDTO linkDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UsefulLinkUpdateDTO linkDto)
         {
-            if (id != linkDto.Id)
-                return BadRequest(new { message = "ID mismatch in request URL and body." });
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                await _usefulLinkService.UpdateAsync(linkDto);
-                return Ok(new { message = $"Useful link \"{linkDto.Name}\" was updated successfully." });
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-            catch (BusinessValidationException ex)
-            {
-                foreach (var error in ex.Errors)
-                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-
-                return BadRequest(ModelState);
-            }
-            catch (BusinessException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            linkDto.Id = id;
+            await _usefulLinkService.UpdateAsync(linkDto);
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                await _usefulLinkService.DeleteAsync(id);
-                return NoContent();
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+            await _usefulLinkService.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

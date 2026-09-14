@@ -1,0 +1,22 @@
+﻿@using Ogani.WebApp.UI.Models.Error
+@model ErrorViewModel
+
+@{
+    ViewData["Title"] = "Server Error";
+    Layout = ViewData["Layout"]?.ToString() ?? "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="error-page spad">
+    <div class="container text-center py-5">
+        <h1 class="display-1 fw-bold text-warning">500</h1>
+        <h2>Internal Server Error</h2>
+        <p class="lead mt-3">@Model.Message</p>
+
+        @if (Model.ShowRequestId)
+        {
+            <p class="text-muted small">Request ID: <code>@Model.RequestId</code></p>
+        }
+
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-4">Back to Homepage</a>
+    </div>
+</section>

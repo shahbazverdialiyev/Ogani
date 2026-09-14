@@ -21,7 +21,7 @@ namespace Ogani.WebApp.Business.Services
             {
                 Platform = s.Platform,
                 Url = s.Url,
-            }).ToListAsync();
+            }).ToListAsync() ?? [];
         }
 
         protected override async Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(SocialLinkCreateDTO socialLinkDto)

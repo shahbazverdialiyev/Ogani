@@ -32,7 +32,7 @@ namespace Ogani.WebApp.Business.Services
             }).ToListAsync() ?? [];
         }
 
-        public async Task<ContactDetailDTO?> GetPhoneAsync()
+        public async Task<ContactDetailDTO> GetPhoneAsync()
         {
             return await GetRepository.GetQuery().Where(c => c.Status && c.Title.ToLower().Trim() == "phone")
                 .Select(p => new ContactDetailDTO
@@ -40,10 +40,11 @@ namespace Ogani.WebApp.Business.Services
                     Title = p.Title,
                     Content = p.Content,
                     Icon = p.Icon
-                }).FirstOrDefaultAsync();
+                }).FirstOrDefaultAsync()
+                ?? throw new NotFoundException("Active phone was not found.");
         }
 
-        public async Task<ContactDetailDTO?> GetEmailAsync()
+        public async Task<ContactDetailDTO> GetEmailAsync()
         {
             return await GetRepository.GetQuery().Where(c => c.Status && c.Title.ToLower().Trim() == "email")
                 .Select(p => new ContactDetailDTO
@@ -51,7 +52,8 @@ namespace Ogani.WebApp.Business.Services
                     Title = p.Title,
                     Content = p.Content,
                     Icon = p.Icon
-                }).FirstOrDefaultAsync();
+                }).FirstOrDefaultAsync()
+                ?? throw new NotFoundException("Active email was not found.");
         }
 
         protected override async Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(ContactCreateDTO contactDto)

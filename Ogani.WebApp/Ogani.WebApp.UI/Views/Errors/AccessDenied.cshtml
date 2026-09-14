@@ -1,0 +1,16 @@
+﻿@using Ogani.WebApp.UI.Models.Error
+@model ErrorViewModel
+
+@{
+    ViewData["Title"] = "Access Denied - 403";
+    Layout = ViewData["Layout"]?.ToString() ?? "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="error-page spad">
+    <div class="container text-center py-5">
+        <h1 class="display-1 fw-bold text-secondary">403</h1>
+        <h2>Access Denied</h2>
+        <p class="lead mt-3">@Model.Message</p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary mt-4">Back to Homepage</a>
+    </div>
+</section>

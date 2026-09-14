@@ -26,14 +26,14 @@ namespace Ogani.WebApp.Business.Services
 
         public async Task<IReadOnlyCollection<ProductReadDTO>> GetProductsByCategoryIdAsync(int categoryId)
         {
-            IReadOnlyCollection<Product> products = await _uoW.ProductRepository.GetProductsByCategoryIdAsync(categoryId);
+            IReadOnlyCollection<Product> products = await _uoW.ProductRepository.GetProductsByCategoryIdAsync(categoryId) ?? [];
 
             return _mapper.Map<IReadOnlyCollection<ProductReadDTO>>(products);
         }
 
         public async Task<IReadOnlyCollection<ProductReadDTO>> GetProductsByDiscountIdAsync(int discountId)
         {
-            IReadOnlyCollection<Product> products = await _uoW.ProductRepository.GetProductsByDiscountIdAsync(discountId);
+            IReadOnlyCollection<Product> products = await _uoW.ProductRepository.GetProductsByDiscountIdAsync(discountId) ?? [];
 
             return _mapper.Map<IReadOnlyCollection<ProductReadDTO>>(products);
         }
@@ -114,7 +114,7 @@ namespace Ogani.WebApp.Business.Services
                                                            d.StartDate <= DateTime.UtcNow &&
                                                            d.EndDate >= DateTime.UtcNow)
                                                     .Max(d => (decimal?)d.DiscountPercentage) ?? 0
-                }).ToListAsync();
+                }).ToListAsync() ?? [];
         }
 
         public async Task<IReadOnlyCollection<ProductCardDTO>> GetLatestProductsAsync()
@@ -125,9 +125,7 @@ namespace Ogani.WebApp.Business.Services
                 Name = p.Name,
                 Price = p.Price,
                 ImageUrl = p.ImageUrl
-
-                //Discount = p.GetAvtiveDiscount()
-            }).ToListAsync();
+            }).ToListAsync() ?? [];
         }
 
         public async Task<ProductDetailDTO> GetProductDetailAsync(int id)
@@ -158,9 +156,7 @@ namespace Ogani.WebApp.Business.Services
                 Name = p.Name,
                 Price = p.Price,
                 ImageUrl = p.ImageUrl
-
-                //Discount = p.GetAvtiveDiscount()
-            }).ToListAsync();
+            }).ToListAsync() ?? [];
         }
 
         public async Task<IReadOnlyCollection<ProductCardDTO>> GetDiscountedProductsAsync()
@@ -180,7 +176,7 @@ namespace Ogani.WebApp.Business.Services
                                                            d.StartDate <= DateTime.UtcNow &&
                                                            d.EndDate >= DateTime.UtcNow)
                                                     .Max(d => (decimal?)d.DiscountPercentage) ?? 0
-                }).ToListAsync();
+                }).ToListAsync() ?? [];
         }
 
         protected async override Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(ProductCreateDTO dto)

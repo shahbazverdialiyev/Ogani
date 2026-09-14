@@ -22,7 +22,7 @@ namespace Ogani.WebApp.UI.Controllers
         public async Task<IActionResult> Index([FromQuery] ProductFilterDTO filter)
         {
 
-            PagedResultDTO<ProductCardDTO> products = await _productService.GetShopProductsAsync(filter);
+            PagedResultDTO<ProductCardDTO> products = await _productService.GetProductsForShopAsync(filter);
 
             ViewBag.Categories = await _categoryService.GetCategoriesForUIAsync();
             ViewBag.Filter = filter;
@@ -40,7 +40,7 @@ namespace Ogani.WebApp.UI.Controllers
             ViewBag.Categories = await _categoryService.GetCategoriesForUIAsync();
             ViewBag.Filter = filter;
 
-            var result = await _productService.GetShopProductsAsync(filter);
+            var result = await _productService.GetProductsForShopAsync(filter);
 
             return PartialView("_ProductsRowPartial", result);
         }
@@ -51,7 +51,7 @@ namespace Ogani.WebApp.UI.Controllers
             if (filter.Page < 1)
                 filter.Page = 1;
 
-            var result = await _productService.GetShopProductsAsync(filter);
+            var result = await _productService.GetProductsForShopAsync(filter);
 
             return PartialView("_ProductListPartial", result);
         }

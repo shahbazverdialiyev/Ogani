@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DTOs.ProductDTO;
 
@@ -11,215 +10,56 @@ namespace Ogani.WebApp.API.Controllers.Admin
     {
         private readonly IProductService _productService;
 
-        public ProductsController(IProductService productService)
-        {
+        public ProductsController(IProductService productService) =>
             _productService = productService;
-        }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] int? categoryId)
-        {
-            var products = categoryId.HasValue
+        public async Task<IActionResult> GetAll([FromQuery] int? categoryId) =>
+            Ok(categoryId.HasValue
                 ? await _productService.GetProductsByCategoryIdAsync(categoryId.Value)
-                : await _productService.GetAllAsync();
-
-            return Ok(products);
-        }
+                : await _productService.GetAllAsync());
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            try
-            {
-                var product = await _productService.GetByIdAsync(id);
-                return Ok(product);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-        }
+        public async Task<IActionResult> GetById(int id) =>
+            Ok(await _productService.GetByIdAsync(id));
 
         [HttpGet("category/{categoryId:int}")]
-        public async Task<IActionResult> GetByCategoryId([FromRoute] int categoryId)
-        {
-            // 1. Input Validation
-            if (categoryId <= 0)
-            {
-                return BadRequest(new { message = "Invalid category ID provided." });
-            }
-
-            try
-            {
-                // 2. Fetch data from business service
-                var products = await _productService.GetProductsByCategoryIdAsync(categoryId);
-
-                if (products == null)
-                {
-                    return NotFound(new { message = $"No products found for category ID {categoryId}." });
-                }
-
-                // 3. Return 200 OK
-                return Ok(products);
-            }
-            catch (Exception ex)
-            {
-                // 4. Handle internal server errors
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    message = "An error occurred while fetching products by category.",
-                    detail = ex.Message
-                });
-            }
-        }
+        public async Task<IActionResult> GetByCategoryId([FromRoute] int categoryId) =>
+            Ok(await _productService.GetProductsByCategoryIdAsync(categoryId));
 
         [HttpGet("{id:int}/for-update")]
-        public async Task<IActionResult> GetForUpdate([FromRoute] int id)
-        {
-            if (id <= 0)
-            {
-                return BadRequest(new { message = "Invalid product ID provided." });
-            }
-
-            try
-            {
-                var productDto = await _productService.GetForUpdateAsync(id);
-
-                if (productDto == null)
-                {
-                    return NotFound(new { message = $"Product not found for update with ID {id}." });
-                }
-
-                return Ok(productDto);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    message = "An error occurred while fetching product data for update.",
-                    detail = ex.Message
-                });
-            }
-        }
+        public async Task<IActionResult> GetForUpdate([FromRoute] int id) =>
+            Ok(await _productService.GetForUpdateAsync(id));
 
         [HttpGet("discount/{discountId:int}")]
-        public async Task<IActionResult> GetByDiscountId([FromRoute] int discountId)
-        {
-            // 1. Input Validation
-            if (discountId <= 0)
-            {
-                return BadRequest(new { message = "Invalid discount ID provided." });
-            }
-
-            try
-            {
-                // 2. Fetch data from business service
-                var products = await _productService.GetProductsByDiscountIdAsync(discountId);
-
-                if (products == null)
-                {
-                    return NotFound(new { message = $"No products found for discount ID {discountId}." });
-                }
-
-                // 3. Return 200 OK
-                return Ok(products);
-            }
-            catch (Exception ex)
-            {
-                // 4. Handle internal server errors
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    message = "An error occurred while fetching products by discount.",
-                    detail = ex.Message
-                });
-            }
-        }
+        public async Task<IActionResult> GetByDiscountId([FromRoute] int discountId) =>
+            Ok(await _productService.GetProductsByDiscountIdAsync(discountId));
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProductCreateDTO productDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            int productId = await _productService.AddAsync(productDto);
 
-            try
-            {
-                int productId = await _productService.AddAsync(productDto);
-
-                return CreatedAtAction(nameof(GetById), new { id = productId }, new { id = productId, message = $"Product \"{productDto.Name}\" created successfully." });
-            }
-            catch (BusinessValidationException ex)
-            {
-                foreach (var error in ex.Errors)
-                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-
-                return BadRequest(ModelState);
-            }
-            catch (BusinessException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = productId },
+                new { id = productId, message = $"Product \"{productDto.Name}\" created successfully." }
+            );
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromForm] ProductUpdateDTO updateDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] ProductUpdateDTO updateDto)
         {
-            if (id <= 0)
-            {
-                return BadRequest(new { message = "Invalid product ID provided." });
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            // Ensure the ID in the route matches the DTO ID
             updateDto.Id = id;
-
-            try
-            {
-                await _productService.UpdateAsync(updateDto);
-                return NoContent(); // 204 No Content - Standard RESTful response
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-            catch (BusinessValidationException ex)
-            {
-                foreach (var error in ex.Errors)
-                {
-                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-                }
-
-                return BadRequest(ModelState);
-            }
-            catch (BusinessException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    message = "An unexpected error occurred while updating the product.",
-                    detail = ex.Message
-                });
-            }
+            await _productService.UpdateAsync(updateDto);
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                await _productService.DeleteAsync(id);
-                return NoContent();
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+            await _productService.DeleteAsync(id);
+            return NoContent();
         }
     }
 }

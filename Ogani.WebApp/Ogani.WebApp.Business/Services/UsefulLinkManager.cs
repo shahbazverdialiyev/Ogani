@@ -22,7 +22,7 @@ namespace Ogani.WebApp.Business.Services
                 Section = u.Section,
                 Name = u.Name,
                 Url = u.Url,
-            }).ToListAsync();
+            }).ToListAsync() ?? [];
         }
 
         protected override async Task<List<ValidationFailure>> AddValidationFailureForCreateAsync(UsefulLinkCreateDTO usefulLinkDto)

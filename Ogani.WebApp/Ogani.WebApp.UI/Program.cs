@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Ogani.WebApp.Business.Extensions;
 using Ogani.WebApp.DataAccess.Extensions;
-using Ogani.WebApp.Business.Services.Interfaces;
-using Ogani.WebApp.Business.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +15,16 @@ builder.Services.AddBusinessServices();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Errors/Unhandled");
+
+    app.UseStatusCodePagesWithReExecute("/Errors/{0}");
+
     app.UseHsts();
 }
 

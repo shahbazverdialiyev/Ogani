@@ -1,7 +1,11 @@
+using Ogani.Api.Handlers;
 using Ogani.WebApp.Business.Extensions;
 using Ogani.WebApp.DataAccess.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -14,6 +18,8 @@ builder.Services.AddDataAccessServices(connectionString);
 builder.Services.AddBusinessServices();
 
 var app = builder.Build();
+
+app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

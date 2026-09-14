@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DTOs.ContactDTO;
 
@@ -11,147 +10,42 @@ namespace Ogani.WebApp.API.Controllers.Admin
     {
         private readonly IContactService _contactService;
 
-        public ContactsController(IContactService contactService)
-        {
+        public ContactsController(IContactService contactService) => 
             _contactService = contactService;
-        }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var contacts = await _contactService.GetAllAsync();
-            return Ok(contacts);
-        }
+        public async Task<IActionResult> GetAll() => 
+            Ok(await _contactService.GetAllAsync());
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            try
-            {
-                var contact = await _contactService.GetByIdAsync(id);
-                return Ok(contact);
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-        }
-
-        [HttpGet("phone")]
-        public async Task<IActionResult> GetPhone()
-        {
-            try
-            {
-                var phoneContact = await _contactService.GetPhoneAsync();
-
-                if (phoneContact == null)
-                {
-                    return NotFound(new { message = "Phone contact information not found." });
-                }
-
-                return Ok(phoneContact);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    message = "An error occurred while fetching phone contact details.",
-                    detail = ex.Message
-                });
-            }
-        }
-
-        [HttpGet("email")]
-        public async Task<IActionResult> GetEmail()
-        {
-            try
-            {
-                var emailContact = await _contactService.GetEmailAsync();
-
-                if (emailContact == null)
-                {
-                    return NotFound(new { message = "Email contact information not found." });
-                }
-
-                return Ok(emailContact);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new
-                {
-                    message = "An error occurred while fetching email contact details.",
-                    detail = ex.Message
-                });
-            }
-        }
+        public async Task<IActionResult> GetById(int id) => 
+            Ok(await _contactService.GetByIdAsync(id));
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ContactCreateDTO contactDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var contactId = await _contactService.AddAsync(contactDto);
 
-            try
-            {
-                await _contactService.AddAsync(contactDto);
-                return StatusCode(StatusCodes.Status201Created, new { message = $"Contact \"{contactDto.Title}\" was created successfully." });
-            }
-            catch (BusinessValidationException ex)
-            {
-                foreach (var error in ex.Errors)
-                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-
-                return BadRequest(ModelState);
-            }
-            catch (BusinessException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            return CreatedAtAction(
+                nameof(GetById), 
+                new { id = contactId }, 
+                new { id = contactId, message = $"Contact \"{contactDto.Title}\" was created successfully." }
+            );
         }
 
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, [FromBody] ContactUpdateDTO contactDto)
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] ContactUpdateDTO contactDto)
         {
-            if (id != contactDto.Id)
-                return BadRequest(new { message = "ID mismatch in request URL and body." });
-
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                await _contactService.UpdateAsync(contactDto);
-                return Ok(new { message = $"Contact \"{contactDto.Title}\" was updated successfully." });
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
-            catch (BusinessValidationException ex)
-            {
-                foreach (var error in ex.Errors)
-                    ModelState.AddModelError(error.PropertyName, error.ErrorMessage);
-
-                return BadRequest(ModelState);
-            }
-            catch (BusinessException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            contactDto.Id = id;
+            await _contactService.UpdateAsync(contactDto);
+            return NoContent();
         }
 
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            try
-            {
-                await _contactService.DeleteAsync(id);
-                return NoContent();
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new { message = ex.Message });
-            }
+            await _contactService.DeleteAsync(id);
+            return NoContent();
         }
     }
 }
