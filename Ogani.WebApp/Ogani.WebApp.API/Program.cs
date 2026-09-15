@@ -1,4 +1,5 @@
 using Ogani.Api.Handlers;
+using Ogani.WebApp.API.Extensions;
 using Ogani.WebApp.Business.Extensions;
 using Ogani.WebApp.DataAccess.Extensions;
 
@@ -16,8 +17,11 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDataAccessServices(connectionString);
 
 builder.Services.AddBusinessServices();
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 var app = builder.Build();
+
+await app.SeedIdentityAsync();
 
 app.UseExceptionHandler();
 

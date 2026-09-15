@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DTOs.ContactDTO;
@@ -6,6 +7,7 @@ using Ogani.WebApp.DTOs.ContactDTO;
 namespace Ogani.WebApp.UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ContactController : Controller
     {
         private readonly IContactService _contactService;
@@ -37,6 +39,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         public IActionResult Create() => View();
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ContactCreateDTO contactDto)
         {
             if (!ModelState.IsValid)
@@ -80,6 +83,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(ContactUpdateDTO contactDto)
         {
             if (!ModelState.IsValid)
@@ -114,6 +118,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             try

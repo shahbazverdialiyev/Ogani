@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
@@ -7,6 +8,7 @@ using Ogani.WebApp.DTOs.ProductDTO;
 namespace Ogani.WebApp.UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
@@ -47,6 +49,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         public IActionResult Create() => View(new ProductCreateDTO());
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ProductCreateDTO productDto)
         {
             if (!ModelState.IsValid)
@@ -92,6 +95,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(ProductUpdateDTO updateDto)
         {
             if (!ModelState.IsValid)
@@ -125,6 +129,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             try

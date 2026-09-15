@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.DTOs.HeroDTO;
@@ -6,6 +7,7 @@ using Ogani.WebApp.DTOs.HeroDTO;
 namespace Ogani.WebApp.UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class HeroController : Controller
     {
         private readonly IHeroService _heroService;
@@ -18,6 +20,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         public async Task<IActionResult> Index() => View(await _heroService.GetAllAsync());
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SetActive(int id)
         {
             try
@@ -37,6 +40,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         public IActionResult Create() => View();
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(HeroCreateDTO heroDto)
         {
             if (!ModelState.IsValid)
@@ -80,6 +84,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(HeroUpdateDTO heroDto)
         {
             if (!ModelState.IsValid)
@@ -113,6 +118,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             try

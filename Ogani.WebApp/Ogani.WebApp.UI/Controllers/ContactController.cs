@@ -12,6 +12,7 @@ namespace Ogani.WebApp.UI.Controllers
             _contactService = contactService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index() => View(await _contactService.GetContactsForUIAsync());
     }
 }

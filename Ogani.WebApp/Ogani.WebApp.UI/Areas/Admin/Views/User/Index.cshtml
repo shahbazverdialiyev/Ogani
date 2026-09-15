@@ -1,0 +1,40 @@
+﻿@using Ogani.WebApp.DTOs.Auth
+@model List<UserDetailDTO>
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="container-fluid mt-4">
+    <h2>User Management</h2>
+    <table class="table table-bordered table-striped mt-3">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Roles</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@user.Id</td>
+                    <td>@user.FullName</td>
+                    <td>@user.Email</td>
+                    <td>
+                        @string.Join(", ", user.Roles)
+                    </td>
+                    <td>
+                        <a asp-action="EditRoles" asp-route-id="@user.Id" class="btn btn-sm btn-warning">Edit Roles</a>
+                        <form asp-action="Delete" asp-route-id="@user.Id" method="post" class="d-inline" onsubmit="return confirm('Are you sure?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

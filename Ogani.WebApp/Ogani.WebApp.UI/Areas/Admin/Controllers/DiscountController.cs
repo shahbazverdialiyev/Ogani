@@ -1,4 +1,5 @@
 ﻿using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ogani.WebApp.Business.Exceptions;
 using Ogani.WebApp.Business.Services.Interfaces;
@@ -7,6 +8,7 @@ using Ogani.WebApp.DTOs.DiscountDTO;
 namespace Ogani.WebApp.UI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class DiscountController : Controller
     {
         private readonly IDiscountService _discountService;
@@ -38,6 +40,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         public IActionResult Create() => View();
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(DiscountCreateDTO dicountDto)
         {
             if (!ModelState.IsValid)
@@ -79,6 +82,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(DiscountUpdateDTO discountDto)
         {
             if (!ModelState.IsValid)
@@ -108,6 +112,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -141,6 +146,7 @@ namespace Ogani.WebApp.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageProducts(DiscountProductsDTO discountDto)
         {
             try

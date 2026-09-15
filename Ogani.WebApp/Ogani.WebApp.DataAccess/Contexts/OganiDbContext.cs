@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Ogani.WebApp.Entities;
+using Ogani.WebApp.Entities.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Ogani.WebApp.DataAccess.Contexts
 {
-    public class OganiDbContext : DbContext
+    public class OganiDbContext : IdentityDbContext<AppUser, AppRole, string>
     {
         public OganiDbContext(DbContextOptions<OganiDbContext> options) : base(options)
         {

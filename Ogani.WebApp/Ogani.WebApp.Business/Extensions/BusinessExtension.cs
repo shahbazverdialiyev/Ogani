@@ -1,15 +1,11 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using Ogani.WebApp.Business.Authentication;
 using Ogani.WebApp.Business.Mappings.AutoMapper;
-using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.Business.Services;
-using Ogani.WebApp.Business.Validators.ProductValidators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Ogani.WebApp.Business.Services.Interfaces;
 using Ogani.WebApp.Business.Services.Storage;
+using Ogani.WebApp.Business.Validators.ProductValidators;
 
 namespace Ogani.WebApp.Business.Extensions
 {
@@ -23,7 +19,12 @@ namespace Ogani.WebApp.Business.Extensions
             //FluentValidation
             services.AddValidatorsFromAssemblyContaining<ProductCreateValidator>();
 
+            // Authentication
+            services.AddScoped<IAuthService, AuthManager>();
+            services.AddScoped<IJwtService, JwtService>();
+
             //Managers
+            services.AddScoped<IUserService, AppUserManager>();
             services.AddScoped<IProductService, ProductManager>();
             services.AddScoped<ICategoryService, CategoryManager>();
             services.AddScoped<IDiscountService, DiscountManager>();
