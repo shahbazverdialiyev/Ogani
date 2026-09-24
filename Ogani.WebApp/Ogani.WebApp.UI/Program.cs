@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Ogani.WebApp.Business.Extensions;
 using Ogani.WebApp.DataAccess.Extensions;
+using Ogani.WebApp.UI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,8 @@ builder.Services.AddDataAccessServices(connectionString);
 builder.Services.AddBusinessServices();
 
 var app = builder.Build();
+
+await app.SeedIdentityAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -33,6 +36,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

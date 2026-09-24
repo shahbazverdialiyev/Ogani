@@ -1,12 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Ogani.WebApp.DataAccess.Contexts;
 using Ogani.WebApp.DataAccess.UnitOfWork;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Ogani.WebApp.Entities.Identity;
 
 namespace Ogani.WebApp.DataAccess.Extensions
 {
@@ -18,8 +15,29 @@ namespace Ogani.WebApp.DataAccess.Extensions
             services.AddDbContext<OganiDbContext>(options =>
             options.UseSqlServer(connectionString));
 
+            //Identity
+            services.AddIdentity();
+
             //Uow
             services.AddScoped<IUoW, UoW>();
+
+            return services;
+        }
+
+        private static IServiceCollection AddIdentity(this IServiceCollection services)
+        {
+            services.AddIdentityCore<AppUser>(options =>
+            {
+                options.Password.RequiredUniqueChars = 2;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+            })
+            .AddRoles<AppRole>()
+            .AddEntityFrameworkStores<OganiDbContext>()
+            .AddUserManager<UserManager<AppUser>>()
+            .AddRoleManager<RoleManager<AppRole>>()
+            .AddDefaultTokenProviders();
 
             return services;
         }

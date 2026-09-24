@@ -19,6 +19,8 @@ builder.Services.AddBusinessServices();
 
 var app = builder.Build();
 
+await app.SeedIdentityAsync();
+
 app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
