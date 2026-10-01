@@ -12,7 +12,7 @@ using Ogani.WebApp.DataAccess.Contexts;
 namespace Ogani.WebApp.DataAccess.Migrations
 {
     [DbContext(typeof(OganiDbContext))]
-    [Migration("20260924191218_InitialIdentitySetup")]
+    [Migration("20260924194210_InitialIdentitySetup")]
     partial class InitialIdentitySetup
     {
         /// <inheritdoc />
