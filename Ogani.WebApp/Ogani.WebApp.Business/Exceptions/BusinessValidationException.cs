@@ -1,13 +1,8 @@
 ﻿using FluentValidation.Results;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ogani.WebApp.Business.Exceptions
 {
-    public class BusinessValidationException:BusinessException
+    public class BusinessValidationException : BusinessException
     {
         public IEnumerable<ValidationFailure> Errors { get; }
 
@@ -16,5 +11,15 @@ namespace Ogani.WebApp.Business.Exceptions
         {
             Errors = errors;
         }
+
+        public BusinessValidationException(ValidationFailure error)
+            : this(new List<ValidationFailure>() { error }) { }
+
+        public BusinessValidationException(string errorMesage, string propertyName = "", string errorCode = "VALIDATION EXCEPTION")
+            : this(new List<ValidationFailure>(){new ValidationFailure(propertyName, errorMesage)
+            {
+                ErrorCode = errorCode
+            } })
+        { }
     }
 }
