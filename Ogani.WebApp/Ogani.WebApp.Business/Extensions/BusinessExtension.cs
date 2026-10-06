@@ -17,6 +17,7 @@ namespace Ogani.WebApp.Business.Extensions
             services.AddAutoMapper(typeof(ProductProfile).Assembly);
 
             //FluentValidation
+            ValidatorOptions.Global.LanguageManager.Enabled = false;
             services.AddValidatorsFromAssemblyContaining<ProductCreateValidator>();
 
             // Authentication
@@ -34,6 +35,9 @@ namespace Ogani.WebApp.Business.Extensions
 
             //FileService
             services.AddScoped<IFileService, LocalFileService>();
+
+            //EmailService
+            services.AddScoped<IEmailService, EmailService>();
 
             return services;
         }

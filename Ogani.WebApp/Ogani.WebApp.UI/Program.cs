@@ -6,12 +6,16 @@ using Ogani.WebApp.UI.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
+});
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDataAccessServices(connectionString);
 
 builder.Services.AddBusinessServices();
+builder.Services.AddCookieAuthentication();
 
 var app = builder.Build();
 

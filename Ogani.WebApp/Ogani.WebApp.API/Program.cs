@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
 using Ogani.Api.Handlers;
+using Ogani.WebApp.API.Extensions;
 using Ogani.WebApp.Business.Extensions;
 using Ogani.WebApp.DataAccess.Extensions;
 
@@ -9,6 +11,11 @@ builder.Services.AddProblemDetails();
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -16,6 +23,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDataAccessServices(connectionString);
 
 builder.Services.AddBusinessServices();
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
@@ -32,6 +40,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

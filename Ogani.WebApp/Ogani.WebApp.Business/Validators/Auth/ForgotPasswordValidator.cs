@@ -14,8 +14,7 @@ namespace Ogani.WebApp.Business.Validators.Auth
         {
             RuleFor(x => x.UserNameOrEmail)
                 .NotEmpty().WithMessage("Username or email is required.")
-                .MinimumLength(3)
-                .MaximumLength(100)
+                .Length(3,100).WithMessage("Invalid username or email.")
                 .Matches(@"^[a-zA-Z0-9_.\-@]+$").WithMessage("Invalid login credentials.");
         }
     }
