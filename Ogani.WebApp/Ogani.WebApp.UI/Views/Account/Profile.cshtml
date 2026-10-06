@@ -1,0 +1,127 @@
+﻿@using Ogani.WebApp.DTOs.Auth
+@using System.Security.Claims
+@model ProfileUpdateDTO
+
+@{
+    ViewData["Title"] = "Profile Settings";
+    bool isEmailConfirmed = bool.Parse(User.FindFirstValue("IsEmailConfirmed") ?? "false");
+}
+
+<link rel="stylesheet" href="~/assets/css/account.css" />
+
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="/assets/img/breadcrumb.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="breadcrumb__text">
+                    <h2>My Profile</h2>
+                    <div class="breadcrumb__option">
+                        <a asp-controller="Home" asp-action="Index">Home</a>
+                        <span>Profile</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+<!-- Profile Form Begin -->
+<div class="contact-form spad">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-md-9">
+                <div class="contact__form__title text-center mb-4">
+                    <h2>Account Details</h2>
+                </div>
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success text-center mb-4">
+                        @TempData["SuccessMessage"]
+                    </div>
+                }
+
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger text-center mb-4">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+
+                <form asp-action="Profile" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="UserName" class="form-label font-weight-bold">Username</label>
+                        <input asp-for="UserName" class="form-control" placeholder="Username" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 form-group mb-4">
+                            <label asp-for="FirstName" class="form-label font-weight-bold">First Name</label>
+                            <input asp-for="FirstName" class="form-control" placeholder="First Name" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 form-group mb-4">
+                            <label asp-for="LastName" class="form-label font-weight-bold">Last Name</label>
+                            <input asp-for="LastName" class="form-control" placeholder="Last Name" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label asp-for="Email" class="form-label font-weight-bold mb-0">Email Address</label>
+
+                            <!-- Ogani Email Status Badge -->
+                            @if (isEmailConfirmed)
+                            {
+                                <span class="ogani-status-badge confirmed">
+                                    <i class="fa fa-check-circle"></i> Verified
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="ogani-status-badge unconfirmed">
+                                    <i class="fa fa-exclamation-circle"></i> Unverified
+                                </span>
+                            }
+                        </div>
+
+                        <input asp-for="Email" type="email" class="form-control" placeholder="Email Address" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+
+                        <!-- Dynamic Resend Confirmation Button -->
+                        @if (!isEmailConfirmed)
+                        {
+                            <div class="mt-2 text-right">
+                                <button type="submit"
+                                        asp-action="SendEmailConfirmation"
+                                        asp-route-userId="@Model.Id"
+                                        asp-route-returnUrl="/Account/Profile"
+                                        class="site-btn site-btn-outline">
+                                    <i class="fa fa-paper-plane mr-1"></i> Resend Verification Link
+                                </button>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="row mt-5">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <button type="submit" class="site-btn w-100">Save Changes</button>
+                        </div>
+                        <div class="col-md-6">
+                            <a asp-action="ChangePassword" class="site-btn site-btn-secondary w-100 text-center d-inline-block">
+                                Change Password
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Profile Form End -->

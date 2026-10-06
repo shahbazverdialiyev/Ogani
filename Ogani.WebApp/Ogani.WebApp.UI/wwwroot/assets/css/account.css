@@ -1,0 +1,68 @@
+﻿/* Custom CSS for Ogani Auth & Profile Forms */
+
+/* Status Badges */
+.ogani-status-badge {
+    font-size: 13px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+    .ogani-status-badge.confirmed {
+        background-color: #eaf6ec;
+        color: #7fad39;
+        border: 1px solid #7fad39;
+    }
+
+    .ogani-status-badge.unconfirmed {
+        background-color: #fdf2f2;
+        color: #d9534f;
+        border: 1px solid #d9534f;
+    }
+
+/* Secondary Button (Dark Theme -> Green Hover) */
+.site-btn-secondary {
+    background: #1c1c1c !important;
+    color: #ffffff !important;
+}
+
+    .site-btn-secondary:hover {
+        background: #7fad39 !important;
+        color: #ffffff !important;
+    }
+
+/* Outline Button */
+.site-btn-outline {
+    background: transparent !important;
+    color: #6f6f6f !important;
+    border: 1px solid #e1e1e1 !important;
+    padding: 8px 16px !important;
+    font-size: 12px !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+    .site-btn-outline:hover {
+        background: #7fad39 !important;
+        color: #ffffff !important;
+        border-color: #7fad39 !important;
+    }
+
+/* Links inside auth forms */
+.auth-link {
+    color: #7fad39;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+    .auth-link:hover {
+        color: #1c1c1c;
+        text-decoration: underline;
+    }
+
+input{
+    margin-bottom:5px!important;
+}
