@@ -1,4 +1,11 @@
-﻿<header class="header">
+﻿@{
+    var currentPath = Context.Request.Path + Context.Request.QueryString;
+    var isAuthPage = Context.Request.Path.Value?.StartsWith("/Account/", StringComparison.OrdinalIgnoreCase) == true;
+
+    var returnUrl = isAuthPage ? null : currentPath;
+}
+
+<header class="header">
     <div class="header__top">
         <div class="container">
             <div class="row">
@@ -6,7 +13,6 @@
                     <div class="header__top__left">
                         <ul>
                             @await Component.InvokeAsync("Contacts")
-
                             <li>Free Shipping for all Order of $99</li>
                         </ul>
                     </div>
@@ -24,9 +30,46 @@
                                 <li><a href="#">English</a></li>
                             </ul>
                         </div>
-                        <div class="header__top__right__auth">
-                            <a href="#"><i class="fa fa-user"></i> Login</a>
-                        </div>
+
+                        @if (!isAuthPage)
+                        {
+                            <div class="header__top__right__auth">
+                                @if (User.Identity?.IsAuthenticated == true)
+                                {
+                                    <div class="header__top__right__language">
+                                        <i class="fa fa-user"></i>
+                                        <span class="arrow_carrot-down"></span>
+                                        <ul style="width: 150px;">
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <li>
+                                                    <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="text-danger fw-bold">
+                                                        <i class="fa fa-cogs"></i> Admin Panel
+                                                    </a>
+                                                </li>
+                                            }
+                                            <li>
+                                                <a asp-area="" asp-controller="Account" asp-action="Profile">
+                                                    <i class="fa fa-id-card"></i> My Profile
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <form asp-area="" asp-controller="Account" asp-action="Logout" asp-route-returnUrl="@returnUrl" method="post" id="clientLogoutForm" class="d-none"></form>
+                                                <a href="javascript:void(0);" onclick="document.getElementById('clientLogoutForm').submit();" class="text-danger">
+                                                    <i class="fa fa-sign-out"></i> Logout
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <a asp-area="" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@returnUrl">
+                                        Login
+                                    </a>
+                                }
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

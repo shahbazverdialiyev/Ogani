@@ -21,13 +21,19 @@ namespace Ogani.WebApp.UI.Controllers
         }
 
         [HttpGet, AllowAnonymous]
-        public IActionResult Register() => View();
+        public IActionResult Register(string? returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterVM model)
+        public async Task<IActionResult> Register(RegisterVM model, string? returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
             if (!ModelState.IsValid)
                 return View(model);
 
@@ -48,18 +54,29 @@ namespace Ogani.WebApp.UI.Controllers
                 return View(model);
             }
 
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
             TempData["SuccessMessage"] = "Account created successfully.";
             return RedirectToAction("Index", "Home");
         }
 
         [HttpGet, AllowAnonymous]
-        public IActionResult Login() => View();
+        public IActionResult Login(string? returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginVM model)
+        public async Task<IActionResult> Login(LoginVM model, string? returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
             if (!ModelState.IsValid)
                 return View(model);
 
@@ -78,6 +95,11 @@ namespace Ogani.WebApp.UI.Controllers
                 return View(model);
             }
 
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
             TempData["SuccessMessage"] = "Login successfully.";
             return RedirectToAction("Index", "Home");
         }
@@ -85,9 +107,14 @@ namespace Ogani.WebApp.UI.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
+        public async Task<IActionResult> Logout(string? returnUrl = null)
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
 
             return RedirectToAction("Index", "Home");
         }
@@ -181,13 +208,19 @@ namespace Ogani.WebApp.UI.Controllers
         }
 
         [HttpGet, AllowAnonymous]
-        public IActionResult ForgotPassword() => View();
+        public IActionResult ForgotPassword(string? returnUrl = null)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
+        }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO dto)
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordDTO dto, string? returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
             if (!ModelState.IsValid)
                 return View(dto);
 
@@ -247,14 +280,15 @@ namespace Ogani.WebApp.UI.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SendEmailConfirmation(string? userId = null, string? returnUrl = null)
+        public async Task<IActionResult> SendEmailConfirmation(string? returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl;
+
+            string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (string.IsNullOrWhiteSpace(userId))
             {
-                userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-                if (string.IsNullOrWhiteSpace(userId))
-                    TempData["ErrorMessage"] = "Invalid user id.";
+                TempData["ErrorMessage"] = "Invalid user id.";
             }
             else
             {
